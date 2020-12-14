@@ -1,0 +1,62 @@
+/* 
+ * Allow tuning of event routing. See reactor doc: 
+ * https://docs.google.com/document/d/1ESCKZAS4Y7Rnla2C53XtZVwpWB2dr4_auNBSR_HpUy4/edit?usp=sharing.
+ */
+
+syntax = "proto3";
+
+import "Network/Proto/broadcast_range.proto";
+
+package common.reactor;
+
+message RoutingSettings {
+	// The number of attempts that this event has been given when sending.
+	int32 send_attempts = 1;
+
+	// The maximum number of attempts this event can be resent.
+	int32 max_send_attempts = 2;
+
+	// The priority the event will have when being sent over the network. 
+	// 0 is treated as the least important and 5 as the most.
+	enum Priority {
+		ZERO = 0;
+		ONE = 1;
+		TWO = 2;
+		THREE = 3;
+		FOUR = 4;
+		FIVE = 5;
+	}
+
+	Priority priority = 3;
+
+	// The number of times the event can pass through network and event 
+	// reactors before it will go to routing failure behavior.
+  int32 max_hops = 4;
+
+  // The current number of hops this event has experienced. Should be incremented by each EventManager and
+	// NetworkingReactor.
+	int32 current_hops = 5;
+
+  // Specify what should happen if the event fails to reach its destination. Failure is determined if an EventManager
+	// cannot figure out where next to send an event to -- i.e. the search for a destination times out. In addition,
+	// if the hop count has gotten higher than it was set to.
+  enum RoutingFailureBehavior {
+  	DROP = 0;
+  	RETURN_EVENT_TO_SENDER = 1;
+  	RAW_ROUTING_FAILURE_EVENT = 2;
+  }
+
+	RoutingFailureBehavior routing_failure_behavior = 6;
+
+  // Specify what should happen if the event fails to reach its destination over and over again until it runs out of
+	// attempts altogether. This should be considered worse case scenario.
+	enum CompleteRoutingFailureBehavior {
+		// Stop trying to send it.
+		STOP_TRYING = 0;
+		SHUTDOWN_REACTOR = 1;
+	}
+	CompleteRoutingFailureBehavior complete_routing_failure_behavior = 7;
+
+	// How far to route the event generally. Will not override the hops allowed so if you set the possible hops too low.
+	network.BroadcastRange broadcast_range = 8;
+}

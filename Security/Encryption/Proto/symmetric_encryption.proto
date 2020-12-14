@@ -1,0 +1,27 @@
+/* 
+ * Define the different symmetric encryption that is supported within Keiros. See networking reactor doc: 
+ * https://docs.google.com/document/d/1y_5UD9mG6yO9jezmt0NnqPpGOn_tu2qSmUQ_gP678GM/edit?usp=sharing.
+ */
+
+syntax = "proto3";
+
+package common.security;
+
+
+message SymmetricEncryption {
+	// All the types of symmetric encryption supported. 
+	enum Types {
+		// The primary type within Keiros. Useful for storage and for maintaining an encrypted
+		// connection. 
+		AES_GCM = 0;
+		// A secondary type to allow stream decrypting -- just additional felxibility.
+		CHA_CHA_20_POLY_1305 = 1;
+	}
+	Types type = 1;
+
+
+	// If there is a number of bits to go along with an encryption type. For example,
+	// AES_GCM can use a "tag" of size 128, 120, 112, 104, or 96.
+	// See: https://en.wikipedia.org/wiki/Galois/Counter_Mode.
+	int64 bits_for_encryption_method = 2;
+}

@@ -1,0 +1,31 @@
+/*
+ * Provide evidence of authentication for a user. 
+ * See networking reactor doc: 
+ * https://docs.google.com/document/d/1L1fgdA6YT84r-nmApy0m9W_H8pgoJLoaLW2Mrair7sg/edit?usp=sharing
+ */
+
+syntax = "proto3";
+
+import "Network/AuthSystem/Authentication/Proto/authentication_type.proto";
+import "Security/Encryption/Proto/signature_info.proto";
+import "Security/Proto/identifier.proto";
+import "Security/Proto/validity_period.proto";
+
+package common.network;
+
+message KeirosSessionToken {
+
+	// A signature for this token from an issuing server. The message hash is made up of 
+	// the session id, the start and end timestamps for the validity period, the user identifier,
+	// and each form of authentication type.
+	security.SignatureInfo issuing_signature = 1;
+
+	// The identifier for this session. This is the identifier for the token. 
+	security.Identifier session_id = 2;
+
+  // The period of time this session token is valid for.
+  security.ValidityPeriod validity_period = 3;
+
+  // The types of confirmed authentication. 
+  repeated AuthenticationType authentication_type = 4;
+}

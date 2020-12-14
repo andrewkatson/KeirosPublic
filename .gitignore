@@ -30,3 +30,12 @@
 *.exe
 *.out
 *.app
+
+# Bazel with CLion
+.clwb/
+
+# Bazel 
+bazel-bin
+bazel-KeirosPublic
+bazel-out
+bazel-testlogs

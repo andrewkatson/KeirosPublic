@@ -1,0 +1,17 @@
+/*
+ * Event information related to its MessageThread.
+ */
+
+syntax = "proto3";
+
+import "Security/Proto/identifier.proto";
+
+package common.reactor;
+
+message MessageThreadInfo {
+  // The message thread identifier.
+  security.Identifier message_thread_id = 1;
+
+  // The stage part of that message thread.
+  security.Identifier stage_id = 2;
+}

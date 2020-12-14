@@ -1,0 +1,28 @@
+/*
+ * Hold any variation of supported session token for a user. 
+ * See networking reactor doc: 
+ * https://docs.google.com/document/d/1L1fgdA6YT84r-nmApy0m9W_H8pgoJLoaLW2Mrair7sg/edit?usp=sharing
+ */
+
+syntax = "proto3";
+
+import "Security/Proto/identifier.proto";
+
+package common.network;
+
+message SessionToken {
+	// The identifier for the user. 
+	security.Identifier user_id = 1;
+
+	// The obfuscated identifier for the user. Prefer this field over user_id.
+	bytes obfuscated_user_id = 2;
+
+	// Supported session token types. 
+	enum SessionTokenType {
+		KEIROS = 0;
+	}
+	SessionTokenType session_token_type = 3;
+
+	// The serialization of the session token of the chosen type. 
+	string token = 4;
+}

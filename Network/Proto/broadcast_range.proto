@@ -1,0 +1,35 @@
+/* 
+ * Limit the broadcast of an event to a given range. Will be caught either by the 
+ * Event Manager or a Networking Reactor. If this is part of a more serious proto 
+ * like Blocking Propagation then it should be signed.
+ * See event manager reactor doc: https://docs.google.com/document/d/1pHXupSh9As_Oz11g3Lg7kh9ZcHMUHsQghq-jUVDtMO4/edit?usp=sharing.
+ */
+
+syntax = "proto3";
+
+import "Security/Proto/identifier.proto";
+
+package common.network;
+
+message BroadcastRange {
+  enum RangeValues {
+    LOCAL_EVENT_MANAGER = 0;
+    N_EVENT_MANAGER_HOPS= 1;
+    ON_SERVER = 2;
+    SERVER_GROUP = 3;
+    DATACENTER = 4;
+    ANY = 5;
+  }
+  RangeValues range_chosen = 1;
+ 
+  // If N_EVENT_MANAGER_HOPS is chosen then we should specify what n is. 
+  // This will limit the number of event managers the event can travel 
+  // through. 
+  int64 max_event_manager_hops = 2;
+
+  // Specify what server group this event started on if that was set.
+  security.Identifier starting_server_group = 3; 
+
+  // Specify how many hops this event has had so far. 
+  int64 event_manager_hops_so_far = 4;
+}

@@ -1,0 +1,88 @@
+/* 
+ * Encapsulate state changes. See event manager reactor doc for more information 
+ * about how events are handled: https://docs.google.com/document/d/1pHXupSh9As_Oz11g3Lg7kh9ZcHMUHsQghq-jUVDtMO4/edit?usp=sharing.
+ */
+
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "Network/AuthSystem/Authentication/Proto/Token/SessionToken/Base/session_token.proto";
+import "Reactor/Proto/Event/Routing/routing_settings.proto";
+import "Reactor/Proto/Event/Thread/message_thread_info.proto";
+import "Security/Encryption/Proto/signature_info.proto";
+import "Security/Proto/identifier.proto";
+
+package common.reactor;
+
+message Event {
+	// Authentication for an event is either provided by a session token or 
+	// a signature by the sending server. Will only be provided on the event that is going to serve
+	// as the verification for a server. So, a true server will simply provide its
+	// signature info while a client will provide the signature info but then later on provide
+	// a session token with authentications.
+  oneof authentication_info {
+  	// Message hash should be the event timestamp, the type id, the event id, every sender id,
+  	// and every receiver id.
+  	network.SessionToken client_session_token = 1;
+  	security.SignatureInfo server_signature = 2;
+  }
+
+	// Identifier used to uniquely identify the packed type of event.
+	security.Identifier type_id = 3;
+	// Identifier used to mark the sender of the event. There can be multiple 
+	// "senders" so that a reactor sending back a responses can reply to multiple
+	// specific reactors at once. These will be reactor identifiers.
+	repeated security.Identifier sender_id = 4;
+	// Identifier used to mark the receiver of the event.
+	repeated security.Identifier receiver_id = 5;
+	// Identifiers used to track this event as part of single thread of related messages.
+	// This is useful if there are multiple events needed as part of an execution.
+	MessageThreadInfo message_thread_info = 6;
+
+	enum CommunicationPart {
+		UNKNOWN = 0;
+		REQUEST = 1;
+		RESPONSE = 2;
+	}
+	// What part of a communication this event represents.
+	CommunicationPart communication_part = 7;
+
+	// The specific event being sent around. 
+	bytes stored_event = 8;
+
+	// The time the event was generated. 
+	google.protobuf.Timestamp timestamp = 9;
+
+	// Settings to tune the routing behavior of the event. 
+	RoutingSettings routing_settings = 10;
+
+	// How to handle the event. Should be set explicitly when a network reactor gets an event 
+	// and processes before it sends to its Event Manager. 
+	enum Treatment {
+		REJECT = 0;
+		ROUTE = 1;
+		INGEST = 2;
+	}
+	Treatment treatment = 11;
+
+	// The checksum for this message. Will include the timestamp, and any identifiers at this level.
+	// Performed with Fletcher's 64, see: https://en.wikipedia.org/wiki/Fletcher%27s_checksum.
+	int64 checksum = 12;
+
+	// Identifier for the event. This can be used to track separately from a MessageThread.
+	security.Identifier event_id = 13;
+
+	// Identifier for the processing settings that apply to this event. This can be used if the event is meant to be a
+	// signal to process as part of some settings.
+	security.Identifier processing_settings_instance_id = 14;
+
+	// Whether this event can be handled asynchronously or not. If yes it will be given its own fiber during handling.
+	bool can_handle_async = 15;
+
+	// If there is a key associated with the stored data.
+	// This refers to a key:value pair where the value is the stored_event.
+	security.Identifier key = 16;
+
+	// All sibling reactors who have received this event. This is the hash of their reactr id to save space.
+	repeated int64 sibling_reactors_sent_to = 17;
+}

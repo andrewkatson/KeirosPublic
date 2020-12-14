@@ -1,0 +1,41 @@
+/*
+ * A multi part message that can be used to identify something -- e.g. an object, 
+ * or a system.
+ */
+
+ syntax = "proto3";
+
+package common.security;
+
+message Identifier {
+
+	// Ordered in assumed use frequency.
+	repeated int32 int32_part = 1;
+	repeated int64 int64_part = 2;
+	repeated string string_part = 3;
+	repeated double double_part = 4;
+	repeated float float_part = 5;
+	repeated bool bool_part = 6;
+
+	// The type of this identifier
+	enum Type {
+		INVALID = 0;  // DO NOT USE
+		KEIROS_USER_ID = 1;
+		REACTOR_ID = 2;
+		SERVER_ID = 3;
+		SERVER_TYPE_ID = 4;
+		EVENT_TYPE_ID = 5;
+		MESSAGE_THREAD_ID = 6;
+		MESSAGE_THREAD_STAGE_ID = 7;
+		MULTIPROCESS_ID = 8;
+		REACTOR_TYPE_ID = 9;
+		PROCESSING_SETTINGS_INSTANCE_ID = 10;
+		CERTIFICATE_ID = 11;
+		SESSION_ID = 12;
+		SERIES_ID = 13;
+		EVENT_ID = 14;
+		CLIENT_ID = 15;
+		MINING_POOL_ID = 16;
+	}
+	Type type = 7;
+}

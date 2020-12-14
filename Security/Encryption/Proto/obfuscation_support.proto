@@ -1,0 +1,20 @@
+/*
+ *  Options for obfuscating data. See auth system doc:
+ * https://docs.google.com/document/d/1cuI-gDcAWKt0KEkdcVV6d7huFC53_DYQfkE7IAbq3_8/edit?usp=sharing.
+ */
+
+syntax = "proto3";
+
+package common.security;
+
+// Encapsulate the options for selecting a supported method of obfuscation
+message ObfuscationSupport {
+  // All the methods supported.
+  enum Types {
+    // Raw SHA3_512
+    SHA_3_512 = 0;
+    // HMAC with SHA3_512. Requires a key.
+    HMAC_SHA3_512 = 1;
+  }
+  Types type = 1;
+}

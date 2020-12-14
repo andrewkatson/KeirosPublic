@@ -1,0 +1,37 @@
+/*
+ * Encapsulate a cryptographic signature done with asymmetric encryption. 
+ * See networking reactor doc: 
+ * https://docs.google.com/document/d/1L1fgdA6YT84r-nmApy0m9W_H8pgoJLoaLW2Mrair7sg/edit?usp=sharing
+ */
+
+syntax = "proto3";
+
+import "Security/Encryption/Proto/key.proto";
+import "Security/Encryption/Proto/obfuscation_support.proto";
+import "Security/Proto/identifier.proto";
+
+package common.security;
+
+message SignatureInfo {
+	// The public key of the signer. 
+	Key signer = 1;
+
+	// A hash produced from data in the event that this signature is attached to. 
+	// What is in this hash should be clearly laid out in the comment on the 
+	// signature field in the event. This way the hash of the message can be 
+	// recomputed. 
+	bytes message_hash = 2;
+
+	// The algorithm to produce the message hash. 
+	security.ObfuscationSupport hash_chosen = 3;
+
+	// The salt used with the hash if one was.
+	bytes salt = 4;
+
+	// The message hash signed by the private key that matches with the public key. 
+	bytes signature = 5;
+
+	// The certificate identifier of the signer.
+	security.Identifier certificate_id = 6;
+
+}

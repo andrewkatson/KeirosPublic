@@ -1,0 +1,20 @@
+/* 
+ * Indicate that an event failed to route without repropogating or dropping. See reactor doc: 
+ * https://docs.google.com/document/d/1ESCKZAS4Y7Rnla2C53XtZVwpWB2dr4_auNBSR_HpUy4/edit?usp=sharing.
+ */
+
+syntax = "proto3";
+
+import "Reactor/Proto/Event/Base/event.proto";
+import "Security/Proto/identifier.proto";
+
+package common.reactor;
+
+message RoutingFailure {
+	// The identifier for the event type that failed to route. 
+	security.Identifier event_type = 1;
+	// The identifier for the event instance that failed to route If one is specified.
+  security.Identifier event_id = 2;
+  // The event that failed to route. Will not always be set.
+  Event failed_event = 3;
+}

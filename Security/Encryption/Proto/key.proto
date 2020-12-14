@@ -1,0 +1,39 @@
+/*
+ * Store a pair or a single key relating to some encryption method.
+ */
+
+
+syntax = "proto3";
+
+import "Security/Encryption/Proto/asymmetric_encryption.proto";
+import "Security/Encryption/Proto/symmetric_encryption.proto";
+
+package common.security;
+
+message Key {
+
+  // Private key or the sole key.
+  // For ChaCha-Poly1305 the first key is the ChaCha the second is the Poly.
+  repeated bytes primary_key = 1;
+
+  // Public key (if this is asymmetric). Will almost always be one (no cases with multiple rn).
+  repeated bytes public_key = 2;
+
+  // What kind of key this is.
+  oneof key_type {
+    AsymmetricEncryption asymmetric_key_type = 3;
+    SymmetricEncryption symmetric_key_type = 4;
+  }
+
+  // The initialization vector if one is needed along with the key.
+  bytes iv = 5;
+
+  // An authentication tag if one is needed along with the key.
+  bytes auth_tag = 6;
+
+  // An authentication vector if one is needed along with the key.
+  bytes auth_vector = 7;
+
+  // Arbitrary additional data.
+  bytes arbitrary_additional_data = 8;
+}

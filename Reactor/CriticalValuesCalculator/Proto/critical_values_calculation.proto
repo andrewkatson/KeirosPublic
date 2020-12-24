@@ -1,0 +1,16 @@
+/*
+ * The values calculated that will be used to run Denarii.
+ */
+
+syntax = "proto3";
+
+package denarii_core.core;
+
+message CriticalValuesCalculation {
+    // The amount of currency a user will receive whenever they mine a  
+    // single block. 
+    double block_reward = 1;
+    // The amount per transaction that a miner receives for validating a 
+    // transaction.
+    double transaction_fee = 2;
+}

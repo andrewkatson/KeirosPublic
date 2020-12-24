@@ -1,0 +1,19 @@
+/*
+ * A request for information about one (or all) of the critical values used by Denarii to function. 
+ */
+
+syntax = "proto3";
+
+import "google/protobuf/field_mask.proto";
+
+package denarii_core.core;
+
+message CriticalValuesInfoRequest {
+  // Valid values are 
+  // 
+  // block_reward
+  // transaction_fee
+  //
+  // both can be specified
+  google.protobuf.FieldMask requested_values = 1;
+}

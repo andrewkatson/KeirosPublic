@@ -1,0 +1,14 @@
+/*
+ * A response with a wrapped calculation for the critical values requested.
+ */
+
+syntax = "proto3";
+
+import "Reactor/CriticalValuesCalculator/Proto/critical_values_calculation.proto";
+
+package denarii_core.core;
+
+message CriticalValuesInfoResponse {
+  CriticalValuesCalculation values_calculation = 1;
+  bool success = 2;
+}

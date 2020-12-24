@@ -1,0 +1,24 @@
+/*
+ * Represent a wallet address for some cryptocurrency wallet.
+ */
+
+syntax = "proto3";
+
+import "Security/Proto/identifier.proto";
+
+package common;
+
+message Wallet {
+  bytes address = 1;
+  // password for the wallet
+  string password = 2;
+  // name of the wallet
+  string name = 3;
+  
+  // This is the user of the wallet rpc. Rarely used. 
+  string user = 4;
+  string user_password = 5;
+  
+  // If this is a user wallet then this is their identifier
+  security.Identifier user_id = 6;
+}

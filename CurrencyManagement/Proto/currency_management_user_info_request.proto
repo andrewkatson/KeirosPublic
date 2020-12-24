@@ -1,0 +1,21 @@
+/*
+ * Request for information about a user's currency being managed.
+ */
+
+syntax = "proto3";
+
+import "google/protobuf/field_mask.proto";
+
+import "Security/Proto/identifier.proto";
+
+package denarii_services.core.currency_management;
+
+message CurrencyManagementUserInfoRequest {
+  // The fields we want to request.
+  // Supported values:
+  //   available_balance
+  google.protobuf.FieldMask user_mask = 1;
+
+  // The user we are requesting for.
+  common.security.Identifier user_id = 2;
+}

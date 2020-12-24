@@ -1,0 +1,17 @@
+/*
+ * Request that a new account is created for a user. This should result in a wallet being created for them.
+ */
+
+syntax = "proto3";
+
+import "Proto/coin.proto";
+import "Security/Proto/identifier.proto";
+
+package denarii_services.core.currency_management;
+
+message NewAccountRequest {
+  // Required. What client is this account for.
+  common.security.Identifier client_id = 1;
+  // What currency the account will be opened for.
+  common.Coin coin = 2;
+}

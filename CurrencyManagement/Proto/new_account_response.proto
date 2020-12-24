@@ -1,0 +1,23 @@
+/*
+ * Response about a user account request for creation.
+ */
+
+syntax = "proto3";
+
+import "Proto/coin.proto";
+import "Proto/wallet.proto";
+import "Security/Proto/identifier.proto";
+
+message NewAccountResponse {
+  // A user identifier assigned to the user.
+  common.security.Identifier user_id = 1;
+
+  // A wallet assigned to the user.
+  common.Wallet wallet = 2;
+
+  bool success = 3;
+
+  common.security.Identifier client_id = 4;
+
+  common.Coin coin = 5;
+}

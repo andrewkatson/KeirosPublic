@@ -1,0 +1,14 @@
+/*
+ * Supported coins used by Denarii Services.
+ */
+
+syntax = "proto3";
+
+package common;
+
+message Coin {
+  enum Type {
+    DENARII = 0;
+  }
+  Type type = 1;
+}

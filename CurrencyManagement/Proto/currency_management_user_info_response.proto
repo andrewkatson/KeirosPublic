@@ -1,0 +1,15 @@
+/*
+ * Response with information about a user's currency being managed.
+ */
+
+syntax = "proto3";
+
+package denarii_services.core.currency_management;
+
+message CurrencyManagementUserInfoResponse {
+
+  // The amount of money that the user can spend.
+  double available_balance = 1;
+
+  bool success = 2;
+}

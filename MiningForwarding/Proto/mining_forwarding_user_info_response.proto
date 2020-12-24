@@ -1,0 +1,12 @@
+/*
+ * Response with information about a user related to their mining.
+ */
+
+syntax = "proto3";
+
+package denarii_services.core.mining_forwarding;
+
+message MiningForwardingUserInfoResponse {
+  double current_balance = 1;
+  bool success = 2;
+}

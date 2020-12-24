@@ -1,0 +1,20 @@
+/*
+ * Request that a new user is created for the purposes of mining forwarding.
+ */
+
+syntax = "proto3";
+
+import "Proto/coin.proto";
+import "Security/Proto/identifier.proto";
+
+package denarii_services.core.mining_forwarding;
+
+message NewUserRequest {
+  // Required. What client is this account for.
+  common.security.Identifier client_id = 1;
+  // What currency the account will be opened for.
+  common.Coin coin = 2;
+  // Whether we should generate a wallet or not for a payout address. If not then we expect that one will
+  // be sent in a NewAccountResponse later on.
+  bool generate_payout_wallet = 3;
+}

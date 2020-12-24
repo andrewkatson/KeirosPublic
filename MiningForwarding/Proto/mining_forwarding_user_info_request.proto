@@ -1,0 +1,20 @@
+/*
+ * Request for information about a user related to their mining.
+ */
+
+syntax = "proto3";
+
+import "google/protobuf/field_mask.proto";
+
+import "Security/Proto/identifier.proto";
+
+package denarii_services.core.mining_forwarding;
+
+message MiningForwardingUserInfoRequest {
+  // The fields that we want to request.
+  // Supported values:
+  //   current_balance
+  google.protobuf.FieldMask user_mask = 1;
+  // The user we are requesting for.
+  common.security.Identifier user_id = 2;
+}

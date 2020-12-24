@@ -1,0 +1,18 @@
+/*
+ * Response to whether a new user was created for mining.
+ */
+
+syntax = "proto3";
+
+import "Proto/wallet.proto";
+import "Security/Proto/identifier.proto";
+
+package denarii_services.core.mining_forwarding;
+
+message NewUserResponse {
+  common.security.Identifier client_id = 1;
+  common.security.Identifier user_id = 2;
+  bool success = 3;
+  // The wallet generated if one was requested to be generated.
+  common.Wallet wallet = 4;
+}

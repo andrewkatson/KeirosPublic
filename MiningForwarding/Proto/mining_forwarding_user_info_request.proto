@@ -17,4 +17,7 @@ message MiningForwardingUserInfoRequest {
   google.protobuf.FieldMask user_mask = 1;
   // The user we are requesting for.
   common.security.Identifier user_id = 2;
+
+  // The requesting client.
+  common.security.Identifier client_id = 3;
 }

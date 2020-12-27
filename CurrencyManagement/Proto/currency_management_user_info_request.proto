@@ -18,4 +18,7 @@ message CurrencyManagementUserInfoRequest {
 
   // The user we are requesting for.
   common.security.Identifier user_id = 2;
+
+  // The client identifier that is doing the requesting.
+  common.security.Identifier client_id = 3;
 }

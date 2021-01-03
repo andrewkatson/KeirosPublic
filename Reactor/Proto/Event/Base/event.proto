@@ -37,7 +37,10 @@ message Event {
 	repeated security.Identifier receiver_id = 5;
 	// Identifiers used to track this event as part of single thread of related messages.
 	// This is useful if there are multiple events needed as part of an execution.
+	// If there is additional message thread information like that for a receiver it can be provided
+	// as alternate message thread info.
 	MessageThreadInfo message_thread_info = 6;
+	MessageThreadInfo receiver_message_thread_info = 18;
 
 	enum CommunicationPart {
 		UNKNOWN = 0;

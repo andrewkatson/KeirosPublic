@@ -86,6 +86,10 @@ message Event {
 	// This refers to a key:value pair where the value is the stored_event.
 	security.Identifier key = 16;
 
-	// All sibling reactors who have received this event. This is the hash of their reactr id to save space.
+	// All sibling reactors who have received this event. This is the hash of their reactor id to save space.
 	repeated int64 sibling_reactors_sent_to = 17;
+
+	// If this is part of a request/response pair this would be the type_id of the other (so if this is a request its the
+	// response and vice versa.
+	security.Identifier pair_type_id = 19;
 }

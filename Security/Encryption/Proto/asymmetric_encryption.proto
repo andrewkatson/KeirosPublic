@@ -5,6 +5,10 @@
 
 syntax = "proto3";
 
+option java_package = "com.keiros.security";
+option java_outer_classname = "AsymmetricEncryptionClass";
+
+
 package common.security;
 
 

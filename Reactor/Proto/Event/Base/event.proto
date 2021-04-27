@@ -12,6 +12,9 @@ import "Reactor/Proto/Event/Thread/message_thread_info.proto";
 import "Security/Encryption/Proto/signature_info.proto";
 import "Security/Proto/identifier.proto";
 
+option java_package = "com.keiros.common.reactor";
+option java_outer_classname = "EventClass";
+
 package common.reactor;
 
 message Event {
@@ -92,4 +95,7 @@ message Event {
 	// If this is part of a request/response pair this would be the type_id of the other (so if this is a request its the
 	// response and vice versa.
 	security.Identifier pair_type_id = 19;
+
+	// If this event is the copy being sent to the RecordReactor. Needed to avoid endless recursion with EventManager.
+	bool sent_to_record_reactor = 20;
 }

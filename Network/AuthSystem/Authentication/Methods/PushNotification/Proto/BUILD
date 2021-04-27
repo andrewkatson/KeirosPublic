@@ -13,60 +13,29 @@ load("@rules_proto_grpc//scala:defs.bzl", "scala_proto_library")
 
 package(default_visibility = ["//visibility:public"])
 
-
-js_proto_library(
-    name = "wallet_js_proto",
-    protos = ["wallet_proto"]
-)
-
-py_proto_library(
-    name = "wallet_py_proto",
-    deps = ["wallet_proto"]
-)
-
-java_proto_library(
-    name = "wallet_java_proto",
-    deps = ["wallet_proto"],
+proto_library(
+    name = "push_notification_type_proto",
+    srcs = ["push_notification_type.proto"],
 )
 
 cc_proto_library(
-    name = "wallet_cc_proto",
-    deps = [":wallet_proto"],
-)
-
-proto_library(
-    name = "wallet_proto",
-    srcs = [":wallet.proto"],
-    deps = [
-    "//Security/Proto:identifier_proto",
-    ],
-)
-
-
-
-js_proto_library(
-    name = "coin_js_proto",
-    protos = ["coin_proto"]
-)
-
-py_proto_library(
-    name = "coin_py_proto",
-    deps = ["coin_proto"]
+    name = "push_notification_type_cc_proto",
+    deps = [":push_notification_type_proto"],
 )
 
 java_proto_library(
-    name = "coin_java_proto",
-    deps = ["coin_proto"],
+    name = "push_notification_type_java_proto",
+    deps = [":push_notification_type_proto"],
 )
 
-cc_proto_library(
-    name = "coin_cc_proto",
-    deps = [":coin_proto"],
+js_proto_library(
+    name = "push_notification_type_js_proto",
+    protos = ["push_notification_type_proto"]
 )
 
-proto_library(
-    name = "coin_proto",
-    srcs = [":coin.proto"],
+py_proto_library(
+    name = "push_notification_type_py_proto",
     deps = [
+        ":push_notification_type_proto",
     ],
 )

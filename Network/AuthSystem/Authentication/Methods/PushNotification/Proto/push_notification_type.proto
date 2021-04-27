@@ -1,0 +1,22 @@
+/*
+ * All methods of issuing a push notification.
+ * See auth system doc:
+ * https://docs.google.com/document/d/1cuI-gDcAWKt0KEkdcVV6d7huFC53_DYQfkE7IAbq3_8/edit?usp=sharing
+ */
+
+syntax = "proto3";
+
+option java_package = "com.keiros.common.network";
+option java_outer_classname = "PushNotificationTypeClass";
+
+package common.network;
+
+message PushNotificationType {
+  // The method the push notification is performed through.
+  enum Method {
+    // Since remote is considered more secure we will default to that.
+    REMOTE = 0;
+    LOCAL = 1;
+  }
+  Method method = 1;
+}

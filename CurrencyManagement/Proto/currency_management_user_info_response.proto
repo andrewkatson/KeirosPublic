@@ -4,6 +4,9 @@
 
 syntax = "proto3";
 
+option java_package = "com.keiros.denarii_core.core.currency_management";
+option java_outer_classname = "CurrencyManagementUserInfoResponseClass";
+
 package denarii_services.core.currency_management;
 
 message CurrencyManagementUserInfoResponse {

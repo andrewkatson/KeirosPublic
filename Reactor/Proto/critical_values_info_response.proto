@@ -6,6 +6,9 @@ syntax = "proto3";
 
 import "Reactor/CriticalValuesCalculator/Proto/critical_values_calculation.proto";
 
+option java_package = "com.keiros.denarii_core.core";
+option java_outer_classname = "CriticalValuesInfoResponseClass";
+
 package denarii_core.core;
 
 message CriticalValuesInfoResponse {

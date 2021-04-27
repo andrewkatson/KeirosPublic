@@ -4,6 +4,9 @@
 
 syntax = "proto3";
 
+option java_package = "com.keiros.denarii_core.core.mining_forwarding";
+option java_outer_classname = "MiningForwardingUserInfoResponseClass";
+
 package denarii_services.core.mining_forwarding;
 
 message MiningForwardingUserInfoResponse {

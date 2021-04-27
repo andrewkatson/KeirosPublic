@@ -3,6 +3,22 @@ load("@rules_cc//cc:defs.bzl", "cc_proto_library")
 
 package(default_visibility = ["//visibility:public"])
 
+
+js_proto_library(
+    name = "event_js_proto",
+    protos = ["event_proto"]
+)
+
+py_proto_library(
+    name = "event_py_proto",
+    deps = ["event_proto"]
+)
+
+java_proto_library(
+    name = "event_java_proto",
+    deps = [":event_proto"],
+)
+
 cc_proto_library(
     name = "event_cc_proto",
     deps = [":event_proto"],

@@ -1,0 +1,24 @@
+/*
+ * The types of authenticator app that can be used.
+ * See auth system:
+ * https://docs.google.com/document/d/1L1fgdA6YT84r-nmApy0m9W_H8pgoJLoaLW2Mrair7sg/edit?usp=sharing
+ */
+
+syntax = "proto3";
+
+option java_package = "com.keiros.common.network";
+option java_outer_classname = "AuthenticatorAppTypeClass";
+
+package common.network;
+
+message AuthenticatorAppType {
+  enum Types {
+    // None is the default to allow the user to change their authenticator
+    // without changing the app it was performed over. If this is selected
+    // but it is needed for processing like in an initial authentication
+    // then an error will be thrown by the ingesting reactor.
+    NONE = 0;
+    GOOGLE = 1;
+  }
+  Types type = 1;
+}

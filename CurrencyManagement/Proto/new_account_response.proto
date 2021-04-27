@@ -8,6 +8,11 @@ import "Proto/coin.proto";
 import "Proto/wallet.proto";
 import "Security/Proto/identifier.proto";
 
+option java_package = "com.keiros.denarii_core.core.currency_management";
+option java_outer_classname = "NewAccountResponseClass";
+
+package denarii_services.core.currency_management;
+
 message NewAccountResponse {
   // A user identifier assigned to the user.
   common.security.Identifier user_id = 1;

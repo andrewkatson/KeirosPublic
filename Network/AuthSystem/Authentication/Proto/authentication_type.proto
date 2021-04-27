@@ -1,0 +1,36 @@
+/*
+ * All forms of authentication a client can provide. Servers use certificates and
+ * signatures for their authentication.
+ * See networking reactor doc:
+ * https://docs.google.com/document/d/1L1fgdA6YT84r-nmApy0m9W_H8pgoJLoaLW2Mrair7sg/edit?usp=sharing
+ */
+
+syntax = "proto3";
+
+import "Network/AuthSystem/Authentication/Methods/PushNotification/Proto/push_notification_type.proto";
+import "Network/AuthSystem/Authentication/Methods/AuthenticatorApp/Proto/authenticator_app_type.proto";
+
+option java_package = "com.keiros.common.network";
+option java_outer_classname = "AuthenticationTypeClass";
+
+package common.network;
+
+message AuthenticationType {
+  // Every supported type.
+  enum Types {
+    PASSWORD = 0;
+    TEXT = 1;
+    EMAIL = 2;
+    PUSH_NOTIFICATION = 3;
+    AUTHENTICATOR_APP = 4;
+    // Supported after a user has already logged in from a device.
+    REMEMBER_ME = 5;
+  }
+  Types type = 1;
+
+  // The type of push notification if that is the type chosen.
+  PushNotificationType push_notification_type = 2;
+
+  // The type of authenticator app if that is the type chosen.
+  AuthenticatorAppType authenticator_app_type = 3;
+}

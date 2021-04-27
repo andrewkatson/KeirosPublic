@@ -8,6 +8,9 @@ syntax = "proto3";
 
 import "Security/Proto/identifier.proto";
 
+option java_package = "com.keiros.common.network";
+option java_outer_classname = "SessionTokenClass";
+
 package common.network;
 
 message SessionToken {

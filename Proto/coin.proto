@@ -4,6 +4,9 @@
 
 syntax = "proto3";
 
+option java_package = "com.keiros.common";
+option java_outer_classname = "CoinClass";
+
 package common;
 
 message Coin {

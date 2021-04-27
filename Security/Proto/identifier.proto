@@ -5,6 +5,9 @@
 
  syntax = "proto3";
 
+option java_package = "com.keiros.common.security";
+option java_outer_classname = "IdentifierClass";
+
 package common.security;
 
 message Identifier {

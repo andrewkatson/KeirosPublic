@@ -10,6 +10,10 @@ import "Security/Encryption/Proto/key.proto";
 import "Security/Encryption/Proto/obfuscation_support.proto";
 import "Security/Proto/identifier.proto";
 
+option java_package = "com.keiros.security";
+option java_outer_classname = "SignatureInfoClass";
+
+
 package common.security;
 
 message SignatureInfo {

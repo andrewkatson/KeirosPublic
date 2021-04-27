@@ -4,6 +4,9 @@
 
 syntax = "proto3";
 
+option java_package = "com.keiros.denarii_core.core";
+option java_outer_classname = "CriticalValuesCalculationClass";
+
 package denarii_core.core;
 
 message CriticalValuesCalculation {

@@ -6,6 +6,9 @@ syntax = "proto3";
 
 import "google/protobuf/field_mask.proto";
 
+option java_package = "com.keiros.denarii_core.core";
+option java_outer_classname = "CriticalValuesInfoRequestClass";
+
 package denarii_core.core;
 
 message CriticalValuesInfoRequest {

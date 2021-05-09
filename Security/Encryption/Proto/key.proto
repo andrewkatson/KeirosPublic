@@ -6,11 +6,12 @@
 syntax = "proto3";
 
 import "Security/Encryption/Proto/asymmetric_encryption.proto";
+import "Security/Encryption/Proto/encryption_instance.proto";
 import "Security/Encryption/Proto/symmetric_encryption.proto";
+
 
 option java_package = "com.keiros.security";
 option java_outer_classname = "KeyClass";
-
 
 package common.security;
 
@@ -29,15 +30,9 @@ message Key {
     SymmetricEncryption symmetric_key_type = 4;
   }
 
-  // The initialization vector if one is needed along with the key.
-  bytes iv = 5;
+  // Data stored per encryption
+  repeated EncryptionInstance encryption_instance = 5;
 
-  // An authentication tag if one is needed along with the key.
-  bytes auth_tag = 6;
-
-  // An authentication vector if one is needed along with the key.
-  bytes auth_vector = 7;
-
-  // Arbitrary additional data.
-  bytes arbitrary_additional_data = 8;
+  // if the key had an initialization vector separate from the one used with each encryption
+  bytes iv = 6;
 }

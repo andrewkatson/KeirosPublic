@@ -5,19 +5,17 @@
 
 syntax = "proto3";
 
+package common.security;
+
 option java_package = "com.keiros.security";
 option java_outer_classname = "SymmetricEncryptionClass";
 
-
-package common.security;
-
-
 message SymmetricEncryption {
-	// All the types of symmetric encryption supported. 
+	// All the types of symmetric encryption supported.
 	enum Types {
 		// The primary type within Keiros. Useful for storage and for maintaining an encrypted
-		// connection. 
-		AES_GCM = 0;
+		// connection.
+		AES_CBC = 0;
 		// A secondary type to allow stream decrypting -- just additional felxibility.
 		CHA_CHA_20_POLY_1305 = 1;
 	}

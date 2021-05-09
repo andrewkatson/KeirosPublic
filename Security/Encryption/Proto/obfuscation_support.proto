@@ -5,20 +5,21 @@
 
 syntax = "proto3";
 
+package common.security;
+
 option java_package = "com.keiros.security";
 option java_outer_classname = "ObfuscationSupportClass";
-
-
-package common.security;
 
 // Encapsulate the options for selecting a supported method of obfuscation
 message ObfuscationSupport {
   // All the methods supported.
   enum Types {
-    // Raw SHA3_512
-    SHA_3_512 = 0;
-    // HMAC with SHA3_512. Requires a key.
-    HMAC_SHA3_512 = 1;
+    // Raw SHA_512
+    SHA_512 = 0;
+    // HMAC with SHA_512. Requires a key.
+    HMAC_SHA_512 = 1;
+    // FNV1a -- use for speed.
+    FNV1A = 2;
   }
   Types type = 1;
 }

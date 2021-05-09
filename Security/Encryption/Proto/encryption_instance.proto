@@ -1,0 +1,33 @@
+/*
+ * Store details used for encrypting/decrypting for a single thing.
+ */
+
+syntax = "proto3";
+
+import "Security/Proto/identifier.proto";
+
+option java_package = "com.keiros.security";
+option java_outer_classname = "EncryptionInstanceClass";
+
+package common.security;
+
+
+message EncryptionInstance {
+  // The initialization vector if one is needed along with the key.
+  bytes iv = 1;
+
+  // An authentication tag if one is needed along with the key.
+  bytes auth_tag = 2;
+
+  // An authentication vector if one is needed along with the key.
+  bytes auth_vector = 3;
+
+  // Arbitrary additional data.
+  bytes arbitrary_additional_data = 4;
+
+  // How many bytes of padding did we have to add
+  int64 padding = 5;
+
+  // some identifier for the data that was encrypted using this information.
+  Identifier identifier = 6;
+}

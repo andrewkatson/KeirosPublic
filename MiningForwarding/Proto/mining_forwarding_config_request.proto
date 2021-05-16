@@ -1,0 +1,24 @@
+/*
+ * Request to configure a mining forwarding service.
+ */
+
+syntax = "proto3";
+
+import "Proto/wallet.proto";
+import "Security/Proto/identifier.proto";
+
+option java_package = "com.keiros.denarii_core.core.mining_forwarding";
+option java_outer_classname = "MiningForwardingConfigRequestClass";
+
+package denarii_services.core.mining_forwarding;
+
+message MiningForwardingConfigRequest {
+  // The client identifier that is doing the requesting.
+  common.security.Identifier client_id = 1;
+
+  // A wallet to specify as the payout wallet.
+  common.Wallet payout_wallet = 2;
+
+  // An amount to shard from each user transaction to the payout wallet.
+  double shard = 3;
+}

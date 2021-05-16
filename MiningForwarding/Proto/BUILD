@@ -125,3 +125,60 @@ proto_library(
     ],
 )
 
+
+js_proto_library(
+    name = "mining_forwarding_config_request_js_proto",
+    deps = [":mining_forwarding_config_request_proto"]
+)
+
+py_proto_library(
+    name = "mining_forwarding_config_request_py_proto",
+    deps = [":mining_forwarding_config_request_proto"]
+)
+
+java_proto_library(
+    name = "mining_forwarding_config_request_java_proto",
+    deps = [":mining_forwarding_config_request_proto"],
+)
+
+cc_proto_library(
+    name = "mining_forwarding_config_request_cc_proto",
+    deps = [":mining_forwarding_config_request_proto"],
+)
+
+proto_library(
+    name = "mining_forwarding_config_request_proto",
+    srcs = [":mining_forwarding_config_request.proto"],
+    deps = [
+        "//Proto:wallet_proto",
+        "//Security/Proto:identifier_proto"
+    ],
+)
+
+
+js_proto_library(
+    name = "mining_forwarding_config_response_js_proto",
+    deps = [":mining_forwarding_config_response_proto"]
+)
+
+py_proto_library(
+    name = "mining_forwarding_config_response_py_proto",
+    deps = [":mining_forwarding_config_response_proto"]
+)
+
+java_proto_library(
+    name = "mining_forwarding_config_response_java_proto",
+    deps = [":mining_forwarding_config_response_proto"],
+)
+
+cc_proto_library(
+    name = "mining_forwarding_config_response_cc_proto",
+    deps = [":mining_forwarding_config_response_proto"],
+)
+
+proto_library(
+    name = "mining_forwarding_config_response_proto",
+    srcs = [":mining_forwarding_config_response.proto"],
+    deps = [
+    ],
+)

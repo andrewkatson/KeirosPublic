@@ -124,3 +124,118 @@ proto_library(
     deps = [
     ],
 )
+
+
+js_proto_library(
+    name = "wallet_info_request_js_proto",
+    deps = [":wallet_info_request_proto"]
+)
+
+py_proto_library(
+    name = "walet_info_request_py_proto",
+    deps = [":wallet_info_request_proto"]
+)
+
+java_proto_library(
+    name = "wallet_info_request_java_proto",
+    deps = [":wallet_info_request_proto"],
+)
+
+cc_proto_library(
+    name = "wallet_info_request_cc_proto",
+    deps = [":wallet_info_request_proto"],
+)
+
+proto_library(
+    name = "wallet_info_request_proto",
+    srcs = [":wallet_info_request.proto"],
+    deps = [
+        "//Security/Proto:identifier_proto",
+    ],
+)
+
+
+js_proto_library(
+    name = "wallet_info_response_js_proto",
+    deps = [":wallet_info_response_proto"]
+)
+
+py_proto_library(
+    name = "walet_info_response_py_proto",
+    deps = [":wallet_info_response_proto"]
+)
+
+java_proto_library(
+    name = "wallet_info_response_java_proto",
+    deps = [":wallet_info_response_proto"],
+)
+
+cc_proto_library(
+    name = "wallet_info_response_cc_proto",
+    deps = [":wallet_info_response_proto"],
+)
+
+proto_library(
+    name = "wallet_info_response_proto",
+    srcs = [":wallet_info_response.proto"],
+    deps = [
+        "//Proto:wallet_proto",
+    ],
+)
+
+js_proto_library(
+    name = "currency_management_config_request_js_proto",
+    deps = [":currency_management_config_request_proto"]
+)
+
+py_proto_library(
+    name = "currency_management_config_request_py_proto",
+    deps = [":currency_management_config_request_proto"]
+)
+
+java_proto_library(
+    name = "currency_management_config_request_java_proto",
+    deps = [":currency_management_config_request_proto"],
+)
+
+cc_proto_library(
+    name = "currency_management_config_request_cc_proto",
+    deps = [":currency_management_config_request_proto"],
+)
+
+proto_library(
+    name = "currency_management_config_request_proto",
+    srcs = [":currency_management_config_request.proto"],
+    deps = [
+        "//Proto:wallet_proto",
+        "//Security/Proto:identifier_proto"
+    ],
+)
+
+js_proto_library(
+    name = "currency_management_config_response_js_proto",
+    deps = [":currency_management_config_response_proto"]
+)
+
+py_proto_library(
+    name = "currency_management_config_resposne_py_proto",
+    deps = [":currency_management_config_response_proto"]
+)
+
+java_proto_library(
+    name = "currency_management_config_response_java_proto",
+    deps = [":currency_management_config_response_proto"],
+)
+
+cc_proto_library(
+    name = "currency_management_config_response_cc_proto",
+    deps = [":currency_management_config_response_proto"],
+)
+
+proto_library(
+    name = "currency_management_config_response_proto",
+    srcs = [":currency_management_config_response.proto"],
+    deps = [
+    ],
+)
+

@@ -1,0 +1,24 @@
+/*
+ * Request to configure a currency managmenet service.
+ */
+
+syntax = "proto3";
+
+import "Proto/wallet.proto";
+import "Security/Proto/identifier.proto";
+
+option java_package = "com.keiros.denarii_core.core.currency_management";
+option java_outer_classname = "CurrencyManagementConfigRequestClass";
+
+package denarii_services.core.currency_management;
+
+message CurrencyManagementConfigRequest {
+  // The client identifier that is doing the requesting.
+  common.security.Identifier client_id = 1;
+
+  // A wallet to specify as the payout wallet.
+  common.Wallet payout_wallet = 2;
+
+  // An amount to shard from each user transaction to the payout wallet.
+  double shard = 3;
+}

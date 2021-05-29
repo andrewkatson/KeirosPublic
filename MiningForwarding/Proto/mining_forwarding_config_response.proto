@@ -1,0 +1,15 @@
+/*
+ * Response to a request to configure a mining forwarding service.
+ */
+
+syntax = "proto3";
+
+option java_package = "com.keiros.denarii_core.core.mining_forwarding";
+option java_outer_classname = "MiningForwardingConfigResponseClass";
+
+package denarii_services.core.mining_forwarding;
+
+message MiningForwardingConfigResponse {
+  bool success = 1;
+  string error = 2;
+}

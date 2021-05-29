@@ -1,0 +1,19 @@
+/*
+ * A request for the wallet information for a user.
+ */
+
+syntax = "proto3";
+
+import "Security/Proto/identifier.proto";
+
+option java_package = "com.keiros.denarii_core.core.currency_management";
+option java_outer_classname = "WalletInfoRequestClass";
+
+package denarii_services.core.currency_management;
+
+message WalletInfoRequest {
+  // The identifier of the client. In this case think of some company that is contracting with us.
+  common.security.Identifier client_id = 1;
+
+  common.security.Identifier user_id = 2;
+}

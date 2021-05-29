@@ -1,0 +1,18 @@
+/*
+ * A response for the request for the wallet information for a user.
+ */
+
+syntax = "proto3";
+
+import "Proto/wallet.proto";
+
+option java_package = "com.keiros.denarii_core.core.currency_management";
+option java_outer_classname = "WalletInfoResponseClass";
+
+package denarii_services.core.currency_management;
+
+message WalletInfoResponse{
+  common.Wallet wallet = 1;
+
+  bool success = 2;
+}

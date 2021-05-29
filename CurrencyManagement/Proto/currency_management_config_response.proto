@@ -1,0 +1,15 @@
+/*
+ * Response to a request to configure a currency managmenet service.
+ */
+
+syntax = "proto3";
+
+option java_package = "com.keiros.denarii_core.core.currency_management";
+option java_outer_classname = "CurrencyManagementConfigResponseClass";
+
+package denarii_services.core.currency_management;
+
+message CurrencyManagementConfigResponse {
+  bool success = 1;
+  string error = 2;
+}

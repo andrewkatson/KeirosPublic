@@ -9,7 +9,7 @@ import "google/protobuf/field_mask.proto";
 import "Security/Proto/identifier.proto";
 
 option java_package = "com.keiros.denarii_core.core.currency_management";
-option java_outer_classname = "CurrencyManagementUserInfoRequest";
+option java_outer_classname = "CurrencyManagementUserInfoRequestClass";
 
 package denarii_services.core.currency_management;
 

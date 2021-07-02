@@ -51,6 +51,13 @@ message Identifier {
 		MOVE_ID = 26;
 		WIDGET_ID = 27;
 		QUEST_ID = 28;
+		AUDIO_ID = 29;
+		TOUCH_ID = 30;
+		GESTURE_ID = 31;
+		FINGER_ID = 32;
+		JOYSTICK_ID = 33;
+		MOUSE_ID = 34;
+		SCENE_ID = 35;
 	}
 	Type type = 7;
 }

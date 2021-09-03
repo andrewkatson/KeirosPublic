@@ -1,0 +1,19 @@
+/**
+ * A vertex of some graph or shape.
+ */
+
+syntax = "proto3";
+
+import "Proto/General/color.proto";
+import "Proto/Math/vec2.proto";
+
+option java_package = "com.keiros.common.math";
+option java_outer_classname = "VertexClass";
+
+package common.math;
+
+message Vertex {
+  Vec2 position = 1;
+  Vec2 uv = 2;
+  general.Color color = 3;
+}

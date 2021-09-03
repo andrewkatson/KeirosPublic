@@ -1,0 +1,17 @@
+/**
+ * A vector of four values
+ */
+
+syntax = "proto3";
+
+option java_package = "com.keiros.common.math";
+option java_outer_classname = "Vec4Class";
+
+package common.math;
+
+message Vec4 {
+  float x = 1;
+  float y = 2;
+  float z = 3;
+  float w = 4;
+}

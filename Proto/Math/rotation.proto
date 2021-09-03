@@ -1,0 +1,17 @@
+/**
+ * Some rotation defined in radians
+ */
+
+syntax = "proto3";
+
+import "Proto/Math/vec2.proto";
+
+option java_package = "com.keiros.common.math";
+option java_outer_classname = "RotationClass";
+
+package common.math;
+
+message Rotation {
+  float angle = 1;
+  Vec2 direction = 2;
+}

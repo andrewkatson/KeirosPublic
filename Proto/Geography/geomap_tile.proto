@@ -1,0 +1,22 @@
+/**
+ * A GeoMap tile that represents some title.
+ */
+
+syntax = "proto3";
+
+import "Proto/Geometry/multipolygon.proto";
+import "Security/Proto/identifier.proto";
+
+option java_package = "com.keiros.common.geography";
+option java_outer_classname = "GeoMapTileClass";
+
+package common.geography;
+
+message GeoMapTile {
+  repeated geometry.MultiPolygon multipolygons = 1;
+  security.Identifier title_id = 2;
+  string title = 3;
+  repeated security.Identifier vassal_ids = 4;
+  security.Identifier liege_id = 5;
+  security.Identifier holder_id = 6;
+}

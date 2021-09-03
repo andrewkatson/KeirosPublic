@@ -1,0 +1,15 @@
+/**
+ * A vector of two values
+ */
+
+syntax = "proto3";
+
+option java_package = "com.keiros.common.math";
+option java_outer_classname = "Vec2Class";
+
+package common.math;
+
+message Vec2 {
+  float x = 1;
+  float y = 2;
+}

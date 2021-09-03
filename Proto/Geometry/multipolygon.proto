@@ -1,0 +1,16 @@
+/**
+ * A 2D polygon of polygons
+ */
+
+syntax = "proto3";
+
+import "Proto/Geometry/polygon.proto";
+
+option java_package = "com.keiros.common.geometry";
+option java_outer_classname = "MultiPolygonClass";
+
+package common.geometry;
+
+message MultiPolygon {
+  repeated Polygon polygons = 1;
+}

@@ -1,0 +1,14 @@
+/**
+ * Metadata about the GeoMap
+ */
+
+syntax = "proto3";
+
+option java_package = "com.keiros.common.geography";
+option java_outer_classname = "GeoMapMetadataClass";
+
+package common.geography;
+
+message GeoMapMetadata {
+  double radius = 1;
+}

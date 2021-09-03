@@ -1,0 +1,16 @@
+/**
+ * A 2D polygon
+ */
+
+syntax = "proto3";
+
+import "Proto/Math/vec2.proto";
+
+option java_package = "com.keiros.common.geometry";
+option java_outer_classname = "PolygonClass";
+
+package common.geometry;
+
+message Polygon {
+  repeated math.Vec2 points = 1;
+}

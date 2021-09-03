@@ -1,0 +1,17 @@
+/**
+ * A color
+ */
+
+syntax = "proto3";
+
+option java_package = "com.keiros.common.general";
+option java_outer_classname = "ColorClass";
+
+package common.general;
+
+message Color {
+  int64 r = 1;
+  int64 g = 2;
+  int64 b = 3;
+  int64 a = 4;
+}

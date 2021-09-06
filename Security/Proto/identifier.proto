@@ -58,6 +58,7 @@ message Identifier {
 		JOYSTICK_ID = 33;
 		MOUSE_ID = 34;
 		SCENE_ID = 35;
+		ABILITY_ID = 36;
 	}
 	Type type = 7;
 }

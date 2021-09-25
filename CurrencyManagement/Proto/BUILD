@@ -6,15 +6,14 @@ load("@rules_proto_grpc//js:defs.bzl", "js_proto_library")
 
 package(default_visibility = ["//visibility:public"])
 
-
 js_proto_library(
     name = "new_account_request_js_proto",
-    protos = ["new_account_request_proto"]
+    protos = ["new_account_request_proto"],
 )
 
 py_proto_library(
     name = "new_account_request_py_proto",
-    deps = ["new_account_request_proto"]
+    deps = ["new_account_request_proto"],
 )
 
 java_proto_library(
@@ -36,15 +35,14 @@ proto_library(
     ],
 )
 
-
 js_proto_library(
     name = "new_account_response_js_proto",
-    protos = ["new_account_response_proto"]
+    protos = ["new_account_response_proto"],
 )
 
 py_proto_library(
     name = "new_account_response_py_proto",
-    deps = ["new_account_response_proto"]
+    deps = ["new_account_response_proto"],
 )
 
 java_proto_library(
@@ -67,15 +65,14 @@ proto_library(
     ],
 )
 
-
 js_proto_library(
     name = "currency_managemeent_user_info_request_js_proto",
-    protos = ["currency_management_user_info_request_proto"]
+    protos = ["currency_management_user_info_request_proto"],
 )
 
 py_proto_library(
     name = "currency_management_user_info_request_py_proto",
-    deps = ["currency_management_user_info_request_proto"]
+    deps = ["currency_management_user_info_request_proto"],
 )
 
 java_proto_library(
@@ -92,20 +89,19 @@ proto_library(
     name = "currency_management_user_info_request_proto",
     srcs = [":currency_management_user_info_request.proto"],
     deps = [
-        "@com_google_protobuf//:field_mask_proto",
         "//Security/Proto:identifier_proto",
+        "@com_google_protobuf//:field_mask_proto",
     ],
 )
 
-
 js_proto_library(
     name = "currency_management_user_info_response_js_proto",
-    protos = ["currency_management_user_info_response_proto"]
+    protos = ["currency_management_user_info_response_proto"],
 )
 
 py_proto_library(
     name = "currency_management_user_info_resonse_py_proto",
-    deps = ["currency_management_user_info_response_proto"]
+    deps = ["currency_management_user_info_response_proto"],
 )
 
 java_proto_library(
@@ -125,15 +121,14 @@ proto_library(
     ],
 )
 
-
 js_proto_library(
     name = "wallet_info_request_js_proto",
-    deps = [":wallet_info_request_proto"]
+    deps = [":wallet_info_request_proto"],
 )
 
 py_proto_library(
     name = "walet_info_request_py_proto",
-    deps = [":wallet_info_request_proto"]
+    deps = [":wallet_info_request_proto"],
 )
 
 java_proto_library(
@@ -154,15 +149,14 @@ proto_library(
     ],
 )
 
-
 js_proto_library(
     name = "wallet_info_response_js_proto",
-    deps = [":wallet_info_response_proto"]
+    deps = [":wallet_info_response_proto"],
 )
 
 py_proto_library(
     name = "walet_info_response_py_proto",
-    deps = [":wallet_info_response_proto"]
+    deps = [":wallet_info_response_proto"],
 )
 
 java_proto_library(
@@ -185,12 +179,12 @@ proto_library(
 
 js_proto_library(
     name = "currency_management_config_request_js_proto",
-    deps = [":currency_management_config_request_proto"]
+    deps = [":currency_management_config_request_proto"],
 )
 
 py_proto_library(
     name = "currency_management_config_request_py_proto",
-    deps = [":currency_management_config_request_proto"]
+    deps = [":currency_management_config_request_proto"],
 )
 
 java_proto_library(
@@ -208,18 +202,18 @@ proto_library(
     srcs = [":currency_management_config_request.proto"],
     deps = [
         "//Proto:wallet_proto",
-        "//Security/Proto:identifier_proto"
+        "//Security/Proto:identifier_proto",
     ],
 )
 
 js_proto_library(
     name = "currency_management_config_response_js_proto",
-    deps = [":currency_management_config_response_proto"]
+    deps = [":currency_management_config_response_proto"],
 )
 
 py_proto_library(
     name = "currency_management_config_resposne_py_proto",
-    deps = [":currency_management_config_response_proto"]
+    deps = [":currency_management_config_response_proto"],
 )
 
 java_proto_library(
@@ -239,3 +233,32 @@ proto_library(
     ],
 )
 
+js_proto_library(
+    name = "transaction_js_proto",
+    deps = [":transaction_proto"],
+)
+
+py_proto_library(
+    name = "transaction_py_proto",
+    deps = [":transaction_proto"],
+)
+
+java_proto_library(
+    name = "transaction_java_proto",
+    deps = [":transaction_proto"],
+)
+
+cc_proto_library(
+    name = "transaction_cc_proto",
+    deps = [":transaction_proto"],
+)
+
+proto_library(
+    name = "transaction_proto",
+    srcs = [":transaction.proto"],
+    deps = [
+        "//Proto:wallet_proto",
+        "//Security/Encryption/Proto:signature_info_proto",
+        "//Security/Proto:identifier_proto",
+    ],
+)

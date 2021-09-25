@@ -1,0 +1,35 @@
+/*
+ * Signals that a user is transfering some amount of money.
+ */
+
+syntax = "proto3";
+
+import "Proto/wallet.proto";
+import "Security/Proto/identifier.proto";
+import "Security/Encryption/Proto/signature_info.proto";
+
+package denarii_services.core.currency_management;
+
+message Transaction {
+  // The identifier of the client. In this case think of some company that is contracting with us.
+  common.security.Identifier client_id = 1;
+
+  common.security.Identifier from_user_id = 2;
+
+  // The user the money is being sent to. This can be used or a wallet can be used.
+  common.security.Identifier to_user_id = 3;
+
+  double amount = 4;
+
+  common.security.SignatureInfo from_user_signature = 5;
+
+  // A wallet to transfer to. This can be used in place of the to_user_id. This represents some kind of external
+  // withdrawal of funds.
+  common.Wallet to_user_wallet = 6;
+
+  // Whether this transaction succeeded or not.
+  bool success = 7;
+
+  // A wallet that funds are to be transferred from. This wallet is opened so it needs to have user credentials attached.
+  common.Wallet from_user_wallet = 8;
+}

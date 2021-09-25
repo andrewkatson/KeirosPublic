@@ -179,8 +179,6 @@ load("@upb//bazel:workspace_deps.bzl", "upb_deps")
 
 upb_deps()
 
-
-
 load("@rules_proto_grpc//js:repositories.bzl", rules_proto_grpc_js_repos = "js_repos")
 
 rules_proto_grpc_js_repos()

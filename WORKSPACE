@@ -60,18 +60,39 @@ http_archive(
 # proto libraries for grpc. this gives us all the esoteric languages that can be used
 http_archive(
     name = "rules_proto_grpc",
-   sha256 = "7954abbb6898830cd10ac9714fbcacf092299fda00ed2baf781172f545120419",
+    sha256 = "7954abbb6898830cd10ac9714fbcacf092299fda00ed2baf781172f545120419",
     strip_prefix = "rules_proto_grpc-3.1.1",
     urls = ["https://github.com/rules-proto-grpc/rules_proto_grpc/archive/3.1.1.tar.gz"],
 )
 
+# Google Test
+http_archive(
+    name = "gtest",
+    sha256 = "94c634d499558a76fa649edb13721dce6e98fb1e7018dfaeba3cd7a083945e91",
+    strip_prefix = "googletest-release-1.10.0",
+    url = "https://github.com/google/googletest/archive/release-1.10.0.zip",
+)
+
+# abseil-cpp
+http_archive(
+    name = "com_google_absl",
+    sha256 = "8400c511d64eb4d26f92c5ec72535ebd0f843067515244e8b50817b0786427f9",
+    strip_prefix = "abseil-cpp-c512f118dde6ffd51cb7d8ac8804bbaf4d266c3a",
+    urls = ["https://github.com/abseil/abseil-cpp/archive/c512f118dde6ffd51cb7d8ac8804bbaf4d266c3a.zip"],
+)
 
 git_repository(
     name = "upb",
-    remote = "https://github.com/protocolbuffers/upb.git",
     commit = "d16bf99ac4658793748cda3251226059892b3b7b",
+    remote = "https://github.com/protocolbuffers/upb.git",
 )
 
+#wolfssl
+new_local_repository(
+    name = "wolfssl",
+    build_file = "external/BUILD.wolfssl",
+    path = "external/wolfssl/wolfssl",
+)
 
 load("@rules_cc//cc:repositories.bzl", "rules_cc_dependencies")
 
@@ -101,14 +122,17 @@ load("@com_github_grpc_grpc//bazel:grpc_deps.bzl", "grpc_deps")
 
 grpc_deps()
 
-
-load("@rules_proto_grpc//:repositories.bzl", "rules_proto_grpc_toolchains", "rules_proto_grpc_repos")
+load("@rules_proto_grpc//:repositories.bzl", "rules_proto_grpc_repos", "rules_proto_grpc_toolchains")
 load("@rules_proto_grpc//:repositories.bzl", "rules_proto_grpc_toolchains")
+
 rules_proto_grpc_toolchains()
+
 rules_proto_grpc_repos()
 
 load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
+
 rules_proto_dependencies()
+
 rules_proto_toolchains()
 
 load("@rules_proto_grpc//csharp:repositories.bzl", rules_proto_grpc_csharp_repos = "csharp_repos")
@@ -161,7 +185,6 @@ load("@build_bazel_rules_android//android:sdk_repository.bzl", "android_sdk_repo
 
 android_sdk_repository(name = "androidsdk")
 
-
 load("@rules_proto_grpc//d:repositories.bzl", rules_proto_grpc_d_repos = "d_repos")
 
 rules_proto_grpc_d_repos()
@@ -169,7 +192,6 @@ rules_proto_grpc_d_repos()
 load("@io_bazel_rules_d//d:d.bzl", "d_repositories")
 
 d_repositories()
-
 
 load("@rules_proto_grpc//c:repositories.bzl", rules_proto_grpc_c_repos = "c_repos")
 
@@ -194,8 +216,6 @@ yarn_install(
 load("@rules_proto_grpc//objc:repositories.bzl", rules_proto_grpc_objc_repos = "objc_repos")
 
 rules_proto_grpc_objc_repos()
-
-
 
 load("@rules_proto_grpc//rust:repositories.bzl", rules_proto_grpc_rust_repos = "rust_repos")
 
@@ -228,5 +248,3 @@ scala_proto_repositories()
 load("@io_bazel_rules_scala//scala:toolchains.bzl", "scala_register_toolchains")
 
 scala_register_toolchains()
-
-

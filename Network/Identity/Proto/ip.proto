@@ -1,0 +1,32 @@
+/*
+ * Information about an IP address.
+ * See networking reactor doc: https://docs.google.com/document/d/1L1fgdA6YT84r-nmApy0m9W_H8pgoJLoaLW2Mrair7sg/edit?usp=sharing.
+ */
+
+syntax = "proto3";
+
+option java_package = "com.keiros.common.network";
+option java_outer_classname = "IPClass";
+
+package common.network;
+
+message IP {
+
+  // The version of IP.
+  enum Version {
+    IP_V4 = 0;
+    IP_V6 = 1;
+  }
+  Version version = 1;
+
+  // The actual IP address. Will always be stored in its full unqualified form
+  // i.e. not CIDR notation.
+  string value = 2;
+
+  // The IP address stored in CIDR notation. See - https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing.
+  // Useful when used within AWS.
+  string block = 3;
+
+  // A port being connected to if this is used to initiate some connection.
+  int64 port = 4;
+}

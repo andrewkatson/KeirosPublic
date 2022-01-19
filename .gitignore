@@ -39,3 +39,6 @@ bazel-bin
 bazel-KeirosPublic
 bazel-out
 bazel-testlogs
+
+# External
+external/wolfssl

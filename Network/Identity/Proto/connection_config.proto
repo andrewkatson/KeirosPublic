@@ -1,0 +1,17 @@
+/*
+ * Information used to setup a server's network connections.
+ * See networking reactor doc: https://docs.google.com/document/d/1L1fgdA6YT84r-nmApy0m9W_H8pgoJLoaLW2Mrair7sg/edit?usp=sharing.
+ */
+
+syntax = "proto3";
+
+import "Network/Identity/Proto/connection_config.proto";
+
+option java_package = "com.keiros.common.network";
+option java_outer_classname = "IPClass";
+
+package common.network;
+
+message ConnectionConfig {
+  repeated IP ip = 1;
+}

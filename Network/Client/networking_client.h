@@ -35,12 +35,18 @@ public:
 
   // Cleanup a connection.
   static void cleanupWolfssl(const common::network::IP &ip);
+
+  // Cleanup the client.
+  static void cleanupWolfssl();
 private:
   // Setup a Wolfssl object.
-  static WOLFSSL* setupWolfsslForConnection(const common::network::IP &ip);
+  static WOLFSSL* setupWolfsslForConnection(const common::network::IP &ip, bool isServer);
 
   // Whether we have setup already.
   static bool mSetup;
+
+  // Whether we are the server or not.
+  static bool mIsServer;
 
   // The wolfssl context object.
   static WOLFSSL_CTX *mCtx;
@@ -49,8 +55,16 @@ private:
   // Keyed by the ip:port string.
   static absl::flat_hash_map<std::string, WOLFSSL*> mWolfssl;
 
+  // The socket connection object used for connecting to different ip:port combinations.
+  // Keyed by the ip:port string.
+  static absl::flat_hash_map<std::string, SOCKET_T> mSocket;
+
+  // The socket connection object used for connecting to different ip:port combinations from the server.
+  // This is used in addition to the socket above.
+  // Keyed by the ip:port string.
+  static absl::flat_hash_map<std::string, SOCKET_T> mConnSocket;
+
   // Cleanup any wolfssl stuff.
-  static void cleanupWolfssl();
   static void cleanupWolfssl(WOLFSSL *ssl);
 
   // Turn an ip proto into a string.

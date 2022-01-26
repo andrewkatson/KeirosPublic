@@ -1,4 +1,7 @@
 #pragma once
+
+#define WIN32_LEAN_AND_MEAN
+
 /*
  * A client that can be used to send generic protobufs encapsulated as Event or EventAndMessage
  */
@@ -7,14 +10,33 @@
 
 #include "absl/container/flat_hash_map.h"
 #include "absl/strings/str_cat.h"
+#ifdef _WIN32
+#include <windows.h>
+#include <winsock2.h>
+#endif
+#ifdef _WIN32
+#include "IDE/WIN10/user_settings.h"
+#include "wolfssl/wolfcrypt/settings.h"
+#else
 #include "wolfssl/options.h"
+#endif
 #include "wolfssl/ssl.h"
 #include "wolfssl/wolfcrypt/settings.h"
+#ifdef _WIN32
+#include <ws2tcpip.h>
+#endif
 
 #include "Network/Identity/Proto/ip.pb.h"
 #include "Network/Protobuf/asio_adapting.h"
 #include "Network/Protobuf/protobuf_helpers.h"
 #include "Reactor/Base/event_and_message.h"
+
+#ifdef _WIN32
+// Need to link with Ws2_32.lib, Mswsock.lib, and Advapi32.lib
+#pragma comment (lib, "Ws2_32.lib")
+#pragma comment (lib, "Mswsock.lib")
+#pragma comment (lib, "AdvApi32.lib")
+#endif
 
 class NetworkingClient {
 public:
@@ -55,6 +77,17 @@ private:
   // Keyed by the ip:port string.
   static absl::flat_hash_map<std::string, WOLFSSL*> mWolfssl;
 
+
+#ifdef _WIN32
+  // The socket connection object used for connecting to different ip:port combinations.
+  // Keyed by the ip:port string.
+  static absl::flat_hash_map<std::string, SOCKET> mSocket;
+
+  // The socket connection object used for connecting to different ip:port combinations from the server.
+  // This is used in addition to the socket above.
+  // Keyed by the ip:port string.
+  static absl::flat_hash_map<std::string, SOCKET> mConnSocket;
+#else
   // The socket connection object used for connecting to different ip:port combinations.
   // Keyed by the ip:port string.
   static absl::flat_hash_map<std::string, SOCKET_T> mSocket;
@@ -63,7 +96,7 @@ private:
   // This is used in addition to the socket above.
   // Keyed by the ip:port string.
   static absl::flat_hash_map<std::string, SOCKET_T> mConnSocket;
-
+#endif
   // Cleanup any wolfssl stuff.
   static void cleanupWolfssl(WOLFSSL *ssl);
 

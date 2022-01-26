@@ -9,7 +9,7 @@ cc_library(
 
 cc_library(
     name = "asio_adapting",
-    srcs = [],
+    srcs = ["asio_adapting.cc"],
     hdrs = ["asio_adapting.h"],
     deps = [
         "@com_google_protobuf//:protobuf",

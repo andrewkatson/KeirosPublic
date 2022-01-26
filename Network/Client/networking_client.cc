@@ -15,6 +15,7 @@ absl::flat_hash_map <std::string, SOCKET_T> NetworkingClient::mConnSocket;
 void NetworkingClient::cleanupWolfssl() {
   wolfSSL_CTX_free(mCtx);
   wolfSSL_Cleanup();
+  mSetup = false;
 }
 
 void NetworkingClient::cleanupWolfssl(WOLFSSL *ssl) {
@@ -62,7 +63,7 @@ bool NetworkingClient::setupAsServer(const std::string &caCertPath, const std::s
   wolfSSL_Init();  /* Initialize wolfSSL */
 
   /* Create the WOLFSSL_CTX */
-  if ((mCtx = wolfSSL_CTX_new(wolfSSLv23_server_method())) == NULL) {
+  if ((mCtx = wolfSSL_CTX_new(wolfSSLv23_server_method())) == nullptr) {
     std::cerr << "Wolfssl context setup failure" << std::endl;
     cleanupWolfssl();
     return false;
@@ -105,7 +106,7 @@ bool NetworkingClient::setupAsClient(const std::string &caCertPath) {
   wolfSSL_Init();/* Initialize wolfSSL */
 
   /* Create the WOLFSSL_CTX */
-  if ((mCtx = wolfSSL_CTX_new(wolfSSLv23_client_method())) == NULL) {
+  if ((mCtx = wolfSSL_CTX_new(wolfSSLv23_client_method())) == nullptr) {
     std::cerr << "Wolfssl context setup failure" << std::endl;
     cleanupWolfssl();
     return false;
@@ -138,7 +139,7 @@ WOLFSSL *NetworkingClient::setupWolfsslForConnection(const common::network::IP &
     * Sets the socket to be stream based (TCP),
     * 0 means choose the default protocol.
     */
-    if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+    if ((sockfd = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0)) == -1) {
       std::cerr << "Connecting to socket failed" << std::endl;
       return nullptr;
     }
@@ -170,7 +171,7 @@ WOLFSSL *NetworkingClient::setupWolfsslForConnection(const common::network::IP &
       socklen_t          size = sizeof(clientAddr);
 
       /* Accept client connections */
-      if ((connd = accept(sockfd, (struct sockaddr *) &clientAddr, &size))
+      if ((connd = accept4(sockfd, (struct sockaddr *) &clientAddr, &size, SOCK_NONBLOCK))
           == -1) {
         std::cerr << "Failed to accept connection" << std::endl;
         return nullptr;
@@ -183,7 +184,7 @@ WOLFSSL *NetworkingClient::setupWolfsslForConnection(const common::network::IP &
       servAddr.sin_port = ip.port(); /* on set port */
 
       /* Get the server IPv4 address from the command line call */
-      if (inet_pton(AF_INET, ip.value().c_str(), &servAddr.sin_addr) != 1) {
+      if (inet_pton(AF_INET, ip.block().c_str(), &servAddr.sin_addr) != 1) {
         std::cerr << "Invalid address" << std::endl;
         return nullptr;
       }
@@ -199,7 +200,7 @@ WOLFSSL *NetworkingClient::setupWolfsslForConnection(const common::network::IP &
 
     WOLFSSL *ssl;
 
-    if ((ssl = wolfSSL_new(mCtx)) == NULL) {
+    if ((ssl = wolfSSL_new(mCtx)) == nullptr) {
       std::cerr << "Wolfssl setup ssl failure" << std::endl;
       cleanupWolfssl(ssl);
       return nullptr;

@@ -3,3 +3,9 @@ py_binary(
     srcs = ["build_check.py"],
     deps = [],
 )
+
+py_binary(
+    name = "configure",
+    srcs = ["configure.py"],
+    deps = [],
+)

@@ -18,8 +18,18 @@ cc_library(
 cc_test(
     name = "networking_client_test",
     srcs = ["networking_client_test.cc"],
+    data = [":connection_configs"],
     deps = [
         ":networking_client",
         "@gtest",
+    ],
+)
+
+filegroup(
+    name = "connection_configs",
+    srcs = [
+        "ca.pem",
+        "test.key.pem",
+        "test-server.pem",
     ],
 )

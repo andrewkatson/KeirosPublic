@@ -9,38 +9,23 @@ using namespace google::protobuf::io;
 
 class AsioInputStream : public CopyingInputStream {
 public:
-    AsioInputStream(WOLFSSL* ssl);
+    explicit AsioInputStream(WOLFSSL* ssl);
 
-    int Read(void *buffer, int size);
+    int Read(void *buffer, int size) override;
 private:
   WOLFSSL* mSSL = nullptr;
 };
 
 
-AsioInputStream::AsioInputStream(WOLFSSL* ssl) : mSSL(ssl){}
-
-
-int
-AsioInputStream::Read(void *buffer, int size) {
-    return wolfSSL_read(mSSL, (char*) buffer, size);
-}
 
 
 class AsioOutputStream : public CopyingOutputStream {
 public:
-    AsioOutputStream(WOLFSSL *ssl);
+    explicit AsioOutputStream(WOLFSSL *ssl);
 
-    bool Write(const void *buffer, int size);
+    bool Write(const void *buffer, int size) override;
 private:
   WOLFSSL* mSSL = nullptr;
 };
 
 
-
-AsioOutputStream::AsioOutputStream(WOLFSSL* ssl) : mSSL(ssl) {}
-
-
-bool
-AsioOutputStream::Write(const void *buffer, int size) {
-  return wolfSSL_write(mSSL, (char*) buffer, size) == size;
-}

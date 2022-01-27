@@ -48,7 +48,7 @@ void NetworkingClient::cleanupWolfssl(const common::network::IP &ip) {
   // Cleanup the Sockets
   if (mSocket.contains(fullyQualified)) {
 #ifdef _WIN32
-    shutdown(mSocket.find(fullyQualified)->second);
+    shutdown(mSocket.find(fullyQualified)->second, SD_BOTH);
     closesocket(mSocket.find(fullyQualified)->second);
 #else
     close(mSocket.find(fullyQualified)->second);
@@ -59,7 +59,7 @@ void NetworkingClient::cleanupWolfssl(const common::network::IP &ip) {
 
   if (mConnSocket.contains(fullyQualified)) {
 #ifdef _WIN32
-    shutdown(mConnSocket.find(fullyQualified)->second);
+    shutdown(mConnSocket.find(fullyQualified)->second, SD_BOTH);
     closesocket(mConnSocket.find(fullyQualified)->second);
 #else
     close(mConnSocket.find(fullyQualified)->second);
@@ -156,6 +156,7 @@ WOLFSSL *NetworkingClient::setupWolfsslForConnection(const common::network::IP &
 #ifdef _WIN32
     SOCKET ConnectSocket = INVALID_SOCKET;
     SOCKET ListenSocket = INVALID_SOCKET;
+    SOCKET ClientSocket = INVALID_SOCKET;
 
     if (!mIsServer) {
       WSADATA wsaData;
@@ -178,7 +179,7 @@ WOLFSSL *NetworkingClient::setupWolfsslForConnection(const common::network::IP &
       hints.ai_protocol = IPPROTO_TCP;
 
       // Resolve the server address and port
-      iResult = getaddrinfo(ip.block(), ip.port(), &hints, &result);
+      iResult = getaddrinfo(ip.block().c_str(), std::to_string(ip.port()).c_str(), &hints, &result);
       if ( iResult != 0 ) {
           std::cerr << "getaddrinfo failure with error " << iResult << std::endl;
           WSACleanup();
@@ -235,7 +236,7 @@ WOLFSSL *NetworkingClient::setupWolfsslForConnection(const common::network::IP &
       hints.ai_flags = AI_PASSIVE;
 
       // Resolve the server address and port
-      iResult = getaddrinfo(NULL, ip.port(), &hints, &result);
+      iResult = getaddrinfo(NULL, std::to_string(ip.port()).c_str(), &hints, &result);
       if ( iResult != 0 ) {
           std::cerr << "getaddrinfo failure with error " << iResult << std::endl;
           WSACleanup();
@@ -248,7 +249,7 @@ WOLFSSL *NetworkingClient::setupWolfsslForConnection(const common::network::IP &
           std::cerr << "socket failed with error " << WSAGetLastError() << std::endl;
           freeaddrinfo(result);
           WSACleanup();
-          return nullptr
+          return nullptr;
       }
 
       // Setup the TCP listening socket
@@ -292,7 +293,7 @@ WOLFSSL *NetworkingClient::setupWolfsslForConnection(const common::network::IP &
     int ret;
 
     /* Attach wolfSSL to the socket */
-    if ((ret = wolfSSL_set_fd(ssl, ClientSocket)) != WOLFSSL_SUCCESS) {
+    if ((ret = wolfSSL_set_fd(ssl, isServer ? ClientSocket : ConnectSocket)) != WOLFSSL_SUCCESS) {
       std::cerr << "Wolfssl set fd failure" << std::endl;
       cleanupWolfssl(ssl);
       return nullptr;
@@ -318,9 +319,9 @@ WOLFSSL *NetworkingClient::setupWolfsslForConnection(const common::network::IP &
 
     mWolfssl.insert(std::make_pair(fullyQualified, ssl));
 
-    mSocket.insert(std::make_pair(fullyQualified, sockfd));
+    mSocket.insert(std::make_pair(fullyQualified, isServer ? ListenSocket : ConnectSocket));
 
-    mConnSocket.insert(std::make_pair(fullyQualified, connd));
+    mConnSocket.insert(std::make_pair(fullyQualified, ClientSocket));
     return ssl;
 
 #else

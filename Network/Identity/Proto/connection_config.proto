@@ -5,7 +5,7 @@
 
 syntax = "proto3";
 
-import "Network/Identity/Proto/connection_config.proto";
+import "Network/Identity/Proto/ip.proto";
 
 option java_package = "com.keiros.common.network";
 option java_outer_classname = "IPClass";

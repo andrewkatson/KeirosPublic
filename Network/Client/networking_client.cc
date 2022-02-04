@@ -82,6 +82,8 @@ bool NetworkingClient::setupAsServer(const std::string &caCertPath, const std::s
 
   wolfSSL_Init();  /* Initialize wolfSSL */
 
+  int result = SSL_SUCCESS;
+
   /* Create the WOLFSSL_CTX */
   if ((mCtx = wolfSSL_CTX_new(wolfSSLv23_server_method())) == nullptr) {
     std::cerr << "Wolfssl context setup failure" << std::endl;
@@ -90,8 +92,9 @@ bool NetworkingClient::setupAsServer(const std::string &caCertPath, const std::s
   }
 
   /* Load CA certificates into CYASSL_CTX */
-  if (wolfSSL_CTX_load_verify_locations(mCtx, caCertPath.c_str(), 0) != SSL_SUCCESS) {
-    std::cerr << "Wolfssl ca cert loading failure" << std::endl;
+  result = wolfSSL_CTX_load_verify_locations(mCtx, caCertPath.c_str(), 0);
+  if (result != SSL_SUCCESS) {
+    std::cerr << "Wolfssl ca cert loading failure " << result <<  std::endl;
     cleanupWolfssl();
     return false;
   }
@@ -99,15 +102,17 @@ bool NetworkingClient::setupAsServer(const std::string &caCertPath, const std::s
 
 
   /* Load server certificates into WOLFSSL_CTX */
-  if (wolfSSL_CTX_use_certificate_file(mCtx, serverCertPath.c_str(), SSL_FILETYPE_PEM) != SSL_SUCCESS) {
-    std::cerr << "Wolfssl server cert loading failure" << std::endl;
+  result = wolfSSL_CTX_use_certificate_file(mCtx, serverCertPath.c_str(), SSL_FILETYPE_PEM);
+  if (result != SSL_SUCCESS) {
+    std::cerr << "Wolfssl server cert loading failure " << result << std::endl;
     cleanupWolfssl();
     return false;
   }
 
   /* Load keys */
-  if (wolfSSL_CTX_use_PrivateKey_file(mCtx, serverKeyPath.c_str(), SSL_FILETYPE_PEM) != SSL_SUCCESS) {
-    std::cerr << "Wolfssl server key loading failure" << std::endl;
+  result = wolfSSL_CTX_use_PrivateKey_file(mCtx, serverKeyPath.c_str(), SSL_FILETYPE_PEM);
+  if (result != SSL_SUCCESS) {
+    std::cerr << "Wolfssl server key loading failure " << result << std::endl;
     cleanupWolfssl();
     return false;
   }
@@ -133,8 +138,10 @@ bool NetworkingClient::setupAsClient(const std::string &caCertPath) {
   }
 
   /* Load CA certificates into WOLFSSL_CTX */
-  if (wolfSSL_CTX_load_verify_locations(mCtx, caCertPath.c_str(), 0) != SSL_SUCCESS) {
-    std::cerr << "Wolfssl ca cert loading failure" << std::endl;
+  int result = wolfSSL_CTX_load_verify_locations(mCtx, caCertPath.c_str(), 0);
+
+  if (result != SSL_SUCCESS) {
+    std::cerr << "Wolfssl ca cert loading failure " << result << std::endl;
     cleanupWolfssl();
     return false;
   }

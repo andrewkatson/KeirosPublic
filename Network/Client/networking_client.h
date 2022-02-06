@@ -7,9 +7,9 @@
  */
 #include <jni.h>
 #include <iostream>
+#include <unordered_map>
 #include <string>
 
-#include "absl/container/flat_hash_map.h"
 #include "absl/strings/str_cat.h"
 #ifdef _WIN32
 #include <windows.h>
@@ -46,10 +46,13 @@ extern "C" {
 /**
  * JNI calls used to call the equivalent C++ functions below.
  */
-JNIEXPORT jboolean JNICALL Java_NetworkingClient_setupAsClient(JNIEnv *, jstring);
-JNIEXPORT jboolean JNICALL Java_NetworkingClient_setupAsServer(JNIEnv *, jstring, jstring, jstring);
-JNIEXPORT jboolean JNICALL Java_NetworkingClient_send(JNIEnv *, jobject, jobject);
-JNIEXPORT jboolean JNICALL Java_NetworkingClient_receive(JNIEnv *, jobject, jobject);
+JNIEXPORT jboolean JNICALL Java_com_keiros_client_network_NetworkingClient_setupAsClient(JNIEnv *, jobject, jstring);
+JNIEXPORT jboolean JNICALL Java_com_keiros_client_network_NetworkingClient_setupAsServer(JNIEnv *, jobject, jstring, jstring, jstring);
+JNIEXPORT jboolean JNICALL Java_com_keiros_client_network_NetworkingClient_send(JNIEnv *, jobject, jstring, jstring);
+JNIEXPORT jboolean JNICALL Java_com_keiros_client_network_NetworkingClient_receive(JNIEnv *, jobject, jstring, jstring);
+
+JNIEXPORT void JNICALL Java_com_keiros_client_network_NetworkingClient_cleanupWolfsslWithIp(JNIEnv *, jobject, jstring);
+JNIEXPORT void JNICALL Java_com_keiros_client_network_NetworkingClient_cleanupWolfssl(JNIEnv *, jobject);
 
 #ifdef __cplusplus
 }
@@ -92,27 +95,27 @@ private:
 
   // The wolfssl ssl objects used for connecting to different ip:port combinations.
   // Keyed by the ip:port string.
-  static absl::flat_hash_map<std::string, WOLFSSL*> mWolfssl;
+  static std::unordered_map<std::string, WOLFSSL*> mWolfssl;
 
 
 #ifdef _WIN32
   // The socket connection object used for connecting to different ip:port combinations.
   // Keyed by the ip:port string.
-  static absl::flat_hash_map<std::string, SOCKET> mSocket;
+  static std::unordered_map<std::string, SOCKET> mSocket;
 
   // The socket connection object used for connecting to different ip:port combinations from the server.
   // This is used in addition to the socket above.
   // Keyed by the ip:port string.
-  static absl::flat_hash_map<std::string, SOCKET> mConnSocket;
+  static std::unordered_map<std::string, SOCKET> mConnSocket;
 #else
   // The socket connection object used for connecting to different ip:port combinations.
   // Keyed by the ip:port string.
-  static absl::flat_hash_map<std::string, SOCKET_T> mSocket;
+  static std::unordered_map<std::string, SOCKET_T> mSocket;
 
   // The socket connection object used for connecting to different ip:port combinations from the server.
   // This is used in addition to the socket above.
   // Keyed by the ip:port string.
-  static absl::flat_hash_map<std::string, SOCKET_T> mConnSocket;
+  static std::unordered_map<std::string, SOCKET_T> mConnSocket;
 #endif
   // Cleanup any wolfssl stuff.
   static void cleanupWolfssl(WOLFSSL *ssl);

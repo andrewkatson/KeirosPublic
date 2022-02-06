@@ -69,11 +69,13 @@ def wolfssl():
     build_command = "./configure --enable-ipv6 --enable-blake2 --enable-blake2s --enable-keygen --enable-certgen --enable-certreq --enable-ed25519 --enable-eccencrypt && make && sudo make install && mkdir build && cp /usr/local/lib/libwolfssl* " + inside_folder_path + "/build"
     os.system(build_command)
 
+
 def chdir(path):
     if not os.path.exists(path):
         os.mkdir(path)
 
     os.chdir(path)
+
 
 def wolfssl():
     wolfssl_path = workspace_path / "external" / "wolfssl"
@@ -100,14 +102,21 @@ def wolfssl_win():
     make_command = "./autogen.sh && ./configure && make"
     os.system(make_command)
 
+
+def update_java_path():
+    global workspace_path
+    workspace_path = workspace_path / "bazel-bin/Network/Client"
+    os.environ["LD_LIBRARY_PATH"] = os.environ["LD_LIBRARY_PATH"] + ":" + workspace_path.__str__()
+
 def main():
     find_workspace_path()
-
+    update_java_path()
     if sys.platform == "linux":
         chdir(workspace_path)
         wolfssl()
     elif sys.platform == "msys":
         chdir(workspace_path)
         wolfssl_win()
+
 
 main()

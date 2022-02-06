@@ -3,8 +3,12 @@ package(default_visibility = ["//visibility:public"])
 java_library(
     name = "networking_client",
     srcs = ["NetworkingClient.java"],
-    data = ["//Network/Client:networking_client"],
+    data = [
+        "//Network/Client:connection_configs",
+        "//Network/Client:networking_client_so",
+    ],
     deps = [
+        "//Network/Client:networking_client_so",
         "//java/com/keiros/reactor/base:event_and_message",
         "//java/com/keiros/tools/general/strings:hex",
         "@com_google_protobuf//:protobuf_java",

@@ -6,17 +6,17 @@ bool NetworkingClient::mIsServer = false;
 
 WOLFSSL_CTX *NetworkingClient::mCtx = nullptr;
 
-absl::flat_hash_map<std::string, WOLFSSL *> NetworkingClient::mWolfssl;
+std::unordered_map<std::string, WOLFSSL *> NetworkingClient::mWolfssl;
 
 
 #ifdef _WIN32
-absl::flat_hash_map <std::string, SOCKET> NetworkingClient::mSocket;
+std::unordered_map<std::string, SOCKET> NetworkingClient::mSocket;
 
-absl::flat_hash_map <std::string, SOCKET> NetworkingClient::mConnSocket;
+std::unordered_map<std::string, SOCKET> NetworkingClient::mConnSocket;
 #else
-absl::flat_hash_map<std::string, SOCKET_T> NetworkingClient::mSocket;
+std::unordered_map<std::string, SOCKET_T> NetworkingClient::mSocket;
 
-absl::flat_hash_map<std::string, SOCKET_T> NetworkingClient::mConnSocket;
+std::unordered_map<std::string, SOCKET_T> NetworkingClient::mConnSocket;
 #endif
 
 void NetworkingClient::cleanupWolfssl() {
@@ -39,14 +39,14 @@ void NetworkingClient::cleanupWolfssl(const common::network::IP &ip) {
   ipToString(ip, &fullyQualified);
 
   // Cleanup the SSL object
-  if (mWolfssl.contains(fullyQualified)) {
+  if (mWolfssl.find(fullyQualified) != mWolfssl.end()) {
     cleanupWolfssl(mWolfssl.find(fullyQualified)->second);
   }
 
   mWolfssl.erase(fullyQualified);
 
   // Cleanup the Sockets
-  if (mSocket.contains(fullyQualified)) {
+  if (mSocket.find(fullyQualified) != mSocket.end()) {
 #ifdef _WIN32
     shutdown(mSocket.find(fullyQualified)->second, SD_BOTH);
     closesocket(mSocket.find(fullyQualified)->second);
@@ -57,7 +57,7 @@ void NetworkingClient::cleanupWolfssl(const common::network::IP &ip) {
 
   mSocket.erase(fullyQualified);
 
-  if (mConnSocket.contains(fullyQualified)) {
+  if (mConnSocket.find(fullyQualified) != mConnSocket.end()) {
 #ifdef _WIN32
     shutdown(mConnSocket.find(fullyQualified)->second, SD_BOTH);
     closesocket(mConnSocket.find(fullyQualified)->second);
@@ -156,7 +156,7 @@ WOLFSSL *NetworkingClient::setupWolfsslForConnection(const common::network::IP &
   std::string fullyQualified;
   ipToString(ip, &fullyQualified);
 
-  if (mWolfssl.contains(fullyQualified)) {
+  if (mWolfssl.find(fullyQualified) != mWolfssl.end()) {
     return mWolfssl.find(fullyQualified)->second;
   } else {
 
@@ -490,42 +490,48 @@ bool NetworkingClient::receive(const common::network::IP &ip, EventAndMessage *e
 
 JNIEXPORT jboolean
 
-JNICALL Java_NetworkingClient_setupAsClient(JNIEnv *env, jstring caCertPath) {
+JNICALL Java_com_keiros_client_network_NetworkingClient_setupAsClient(JNIEnv *env, jobject obj, jstring caCertPath) {
   jboolean isCopy;
   const char *convertedValue = (env)->GetStringUTFChars(caCertPath, &isCopy);
   std::string caCertPathCopy = std::string(convertedValue);
-  return NetworkingClient::setupAsClient(hex_to_string(caCertPathCopy));
+
+  bool success = NetworkingClient::setupAsClient(hex_to_string(caCertPathCopy));
+
+  env->ReleaseStringUTFChars(caCertPath, convertedValue);
+
+  return success;
 }
 
 JNIEXPORT jboolean
 
 JNICALL
-Java_NetworkingClient_setupAsServer(JNIEnv *env, jstring caCertPath, jstring serverCertPath, jstring serverKeyPath) {
-  jboolean isCopy;
-  const char *convertedValue = (env)->GetStringUTFChars(caCertPath, &isCopy);
+Java_com_keiros_client_network_NetworkingClient_setupAsServer(JNIEnv *env, jobject obj, jstring caCertPath, jstring serverCertPath, jstring serverKeyPath) {
+  const char *convertedValue = (env)->GetStringUTFChars(caCertPath, nullptr);
   std::string caCertPathCopy = std::string(convertedValue);
 
-  jboolean isCopyTwo;
-  const char *convertedValueTwo = (env)->GetStringUTFChars(serverCertPath, &isCopyTwo);
+  const char *convertedValueTwo = (env)->GetStringUTFChars(serverCertPath, nullptr);
   std::string serverCertPathCopy = std::string(convertedValueTwo);
 
-  jboolean isCopyThree;
-  const char *convertedValueThree = (env)->GetStringUTFChars(serverKeyPath, &isCopyThree);
+  const char *convertedValueThree = (env)->GetStringUTFChars(serverKeyPath, nullptr);
   std::string serverKeyPathCopy = std::string(convertedValueThree);
 
-  return NetworkingClient::setupAsServer(hex_to_string(caCertPathCopy), hex_to_string(serverCertPathCopy), hex_to_string(serverKeyPathCopy));
+  bool success =  NetworkingClient::setupAsServer(hex_to_string(caCertPathCopy), hex_to_string(serverCertPathCopy), hex_to_string(serverKeyPathCopy));
+
+  env->ReleaseStringUTFChars(caCertPath, convertedValue);
+  env->ReleaseStringUTFChars(serverCertPath, convertedValueTwo);
+  env->ReleaseStringUTFChars(serverKeyPath, convertedValueThree);
+
+  return success;
 }
 
 JNIEXPORT jboolean
 
-JNICALL Java_NetworkingClient_send(JNIEnv *env, jstring ip, jstring event) {
+JNICALL Java_com_keiros_client_network_NetworkingClient_send(JNIEnv *env, jobject obj, jstring ip, jstring event) {
 
-  jboolean isCopy;
-  const char *convertedValue = (env)->GetStringUTFChars(ip, &isCopy);
+  const char *convertedValue = (env)->GetStringUTFChars(ip, nullptr);
   std::string ipCopy = std::string(convertedValue);
 
-  jboolean isCopyTwo;
-  const char *convertedValueTwo = (env)->GetStringUTFChars(event, &isCopyTwo);
+  const char *convertedValueTwo = (env)->GetStringUTFChars(event, nullptr);
   std::string eventCopy = std::string(convertedValueTwo);
 
   common::network::IP ipObj;
@@ -534,18 +540,21 @@ JNICALL Java_NetworkingClient_send(JNIEnv *env, jstring ip, jstring event) {
   common::reactor::Event eventObj;
   eventObj.ParseFromString(hex_to_string(eventCopy));
 
-  return NetworkingClient::send(ipObj, eventObj);
+  bool success = NetworkingClient::send(ipObj, eventObj);
+
+  env->ReleaseStringUTFChars(ip, convertedValue);
+  env->ReleaseStringUTFChars(event, convertedValueTwo);
+
+  return success;
 }
 
 JNIEXPORT jboolean
 
-JNICALL Java_NetworkingClient_receive(JNIEnv *env, jstring ip, jstring event) {
-  jboolean isCopy;
-  const char *convertedValue = (env)->GetStringUTFChars(ip, &isCopy);
+JNICALL Java_com_keiros_client_network_NetworkingClient_receive(JNIEnv *env, jobject obj, jstring ip, jstring event) {
+  const char *convertedValue = (env)->GetStringUTFChars(ip, nullptr);
   std::string ipCopy = std::string(convertedValue);
 
-  jboolean isCopyTwo;
-  const char *convertedValueTwo = (env)->GetStringUTFChars(event, &isCopyTwo);
+  const char *convertedValueTwo = (env)->GetStringUTFChars(event, nullptr);
   std::string eventCopy = std::string(convertedValueTwo);
 
   common::network::IP ipObj;
@@ -562,5 +571,25 @@ JNICALL Java_NetworkingClient_receive(JNIEnv *env, jstring ip, jstring event) {
   const char *convertedBack = eventAsString.c_str();
   *event = *env->NewStringUTF(convertedBack);
 
+  env->ReleaseStringUTFChars(ip, convertedValue);
+  env->ReleaseStringUTFChars(event, convertedValueTwo);
+
   return success;
+}
+
+JNIEXPORT void JNICALL Java_com_keiros_client_network_NetworkingClient_cleanupWolfsslWithIp(JNIEnv * env, jobject obj, jstring ip) {
+  const char *convertedValue = (env)->GetStringUTFChars(ip, nullptr);
+
+  std::string ipCopy = std::string(convertedValue);
+
+  common::network::IP ipObj;
+  ipObj.ParseFromString(hex_to_string(ipCopy));
+
+  NetworkingClient::cleanupWolfssl(ipObj);
+
+  env->ReleaseStringUTFChars(ip, convertedValue);
+}
+
+JNIEXPORT void JNICALL Java_com_keiros_client_network_NetworkingClient_cleanupWolfssl(JNIEnv * env, jobject obj) {
+  NetworkingClient::cleanupWolfssl();
 }

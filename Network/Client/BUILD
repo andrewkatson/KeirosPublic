@@ -11,11 +11,16 @@ cc_library(
         "//Reactor/Base:event_and_message",
         "//Tools/General/Strings:hex",
         "//Tools/JNI:copy_jni_hdr_lib",
-        "@com_google_absl//absl/container:flat_hash_map",
         "@com_google_absl//absl/strings",
         "@wolfssl",
     ],
     alwayslink = True,
+)
+
+cc_binary(
+    name = "networking_client_so",
+    linkshared = True,
+    deps = [":networking_client"],
 )
 
 cc_test(

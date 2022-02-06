@@ -1,4 +1,4 @@
-package java.com.keiros.client.network;
+package com.keiros.client.network;
 
 import com.google.protobuf.ByteString;
 
@@ -10,31 +10,51 @@ import com.keiros.tools.general.strings.Hex;
 public class NetworkingClient {
 
     static {
-        System.loadLibrary("main-jni");
+        System.loadLibrary("networking_client_so");
     }
 
     // Setup this networking client as a client.
-    private native boolean setupAsClient(String caCertPath);
+    private static native boolean setupAsClient(String caCertPath);
+
+    public static boolean setupAsClientMethod(String caCertPath) throws Exception {
+        return true;
+    }
 
     // Setup this networking client as a server.
-    private native boolean setupAsServer(String caCertPath, String serverCertPath, String serverKeyPath);
+    private static native boolean setupAsServer(String caCertPath, String serverCertPath, String serverKeyPath);
+
+    public static boolean setupAsServerMethod(String caCertPath, String serverCertPath, String serverKeyPath) throws Exception {
+        System.out.println(Hex.getHexString(ByteString.copyFromUtf8(caCertPath).toByteArray()));
+        return true;
+    }
 
     // Send some event over the wire.
-    private native boolean send(String ip, String event);
-    public boolean send(IP ip, EventAndMessage event) throws Exception {
+    private static native boolean send(String ip, String event);
+
+    public static boolean send(IP ip, EventAndMessage event) throws Exception {
         event.event.setStoredEvent(event.message.build().toByteString());
-        return send(Hex.getHexString(ip.toByteArray()), Hex.getHexString(event.event.build().toByteArray()));
+        return false;
     }
 
     // Receive some event from the wire.
-    private native boolean receive(String ip, String event);
-    public boolean receive(IP ip, EventAndMessage event) throws Exception {
+    private static native boolean receive(String ip, String event);
+
+    public static boolean receive(IP ip, EventAndMessage event) throws Exception {
         event.event.setStoredEvent(event.message.build().toByteString());
-        String eventString = Hex.getHexString(event.event.build().toByteArray());
-        boolean success = receive(Hex.getHexString(ip.toByteArray()), eventString);
+        return false;
+    }
 
-        event.event = Event.parseFrom(ByteString.copyFrom(Hex.hexStringToByteArray(eventString))).toBuilder();
+    // Perform cleanup of wolfssl for a single ip.
+    private static native void cleanupWolfsslWithIp(String ip);
 
-        return success;
+    public static void cleanupWolfssl(IP ip) throws Exception {
+        cleanupWolfsslWithIp(Hex.getHexString(ip.toByteArray()));
+    }
+
+    // Perform cleanup of wolfssl for all the rest of it. Should be called after the above function.
+    private static native void cleanupWolfssl();
+
+    public static void cleanupWolfsslMethod() {
+        cleanupWolfssl();
     }
 }

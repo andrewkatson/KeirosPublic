@@ -1,0 +1,10 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
+
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "hex",
+    srcs = [],
+    hdrs = ["hex.h"],
+    deps = [],
+)

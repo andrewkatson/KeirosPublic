@@ -34,6 +34,9 @@
 # Bazel with CLion
 .clwb/
 
+# Bazel with Idea
+.ijwb/
+
 # Bazel 
 bazel-bin
 bazel-KeirosPublic

@@ -14,9 +14,9 @@ absl::flat_hash_map <std::string, SOCKET> NetworkingClient::mSocket;
 
 absl::flat_hash_map <std::string, SOCKET> NetworkingClient::mConnSocket;
 #else
-absl::flat_hash_map <std::string, SOCKET_T> NetworkingClient::mSocket;
+absl::flat_hash_map<std::string, SOCKET_T> NetworkingClient::mSocket;
 
-absl::flat_hash_map <std::string, SOCKET_T> NetworkingClient::mConnSocket;
+absl::flat_hash_map<std::string, SOCKET_T> NetworkingClient::mConnSocket;
 #endif
 
 void NetworkingClient::cleanupWolfssl() {
@@ -94,7 +94,7 @@ bool NetworkingClient::setupAsServer(const std::string &caCertPath, const std::s
   /* Load CA certificates into CYASSL_CTX */
   result = wolfSSL_CTX_load_verify_locations(mCtx, caCertPath.c_str(), 0);
   if (result != SSL_SUCCESS) {
-    std::cerr << "Wolfssl ca cert loading failure " << result <<  std::endl;
+    std::cerr << "Wolfssl ca cert loading failure " << result << std::endl;
     cleanupWolfssl();
     return false;
   }
@@ -368,7 +368,7 @@ WOLFSSL *NetworkingClient::setupWolfsslForConnection(const common::network::IP &
       }
 
       struct sockaddr_in clientAddr;
-      socklen_t          size = sizeof(clientAddr);
+      socklen_t size = sizeof(clientAddr);
 
       /* Accept client connections */
       if ((connd = accept4(sockfd, (struct sockaddr *) &clientAddr, &size, SOCK_NONBLOCK))
@@ -486,4 +486,81 @@ bool NetworkingClient::receive(const common::network::IP &ip, common::reactor::E
 
 bool NetworkingClient::receive(const common::network::IP &ip, EventAndMessage *event) {
   return receive(ip, event->event.get());
+}
+
+JNIEXPORT jboolean
+
+JNICALL Java_NetworkingClient_setupAsClient(JNIEnv *env, jstring caCertPath) {
+  jboolean isCopy;
+  const char *convertedValue = (env)->GetStringUTFChars(caCertPath, &isCopy);
+  std::string caCertPathCopy = std::string(convertedValue);
+  return NetworkingClient::setupAsClient(hex_to_string(caCertPathCopy));
+}
+
+JNIEXPORT jboolean
+
+JNICALL
+Java_NetworkingClient_setupAsServer(JNIEnv *env, jstring caCertPath, jstring serverCertPath, jstring serverKeyPath) {
+  jboolean isCopy;
+  const char *convertedValue = (env)->GetStringUTFChars(caCertPath, &isCopy);
+  std::string caCertPathCopy = std::string(convertedValue);
+
+  jboolean isCopyTwo;
+  const char *convertedValueTwo = (env)->GetStringUTFChars(serverCertPath, &isCopyTwo);
+  std::string serverCertPathCopy = std::string(convertedValueTwo);
+
+  jboolean isCopyThree;
+  const char *convertedValueThree = (env)->GetStringUTFChars(serverKeyPath, &isCopyThree);
+  std::string serverKeyPathCopy = std::string(convertedValueThree);
+
+  return NetworkingClient::setupAsServer(hex_to_string(caCertPathCopy), hex_to_string(serverCertPathCopy), hex_to_string(serverKeyPathCopy));
+}
+
+JNIEXPORT jboolean
+
+JNICALL Java_NetworkingClient_send(JNIEnv *env, jstring ip, jstring event) {
+
+  jboolean isCopy;
+  const char *convertedValue = (env)->GetStringUTFChars(ip, &isCopy);
+  std::string ipCopy = std::string(convertedValue);
+
+  jboolean isCopyTwo;
+  const char *convertedValueTwo = (env)->GetStringUTFChars(event, &isCopyTwo);
+  std::string eventCopy = std::string(convertedValueTwo);
+
+  common::network::IP ipObj;
+  ipObj.ParseFromString(hex_to_string(ipCopy));
+
+  common::reactor::Event eventObj;
+  eventObj.ParseFromString(hex_to_string(eventCopy));
+
+  return NetworkingClient::send(ipObj, eventObj);
+}
+
+JNIEXPORT jboolean
+
+JNICALL Java_NetworkingClient_receive(JNIEnv *env, jstring ip, jstring event) {
+  jboolean isCopy;
+  const char *convertedValue = (env)->GetStringUTFChars(ip, &isCopy);
+  std::string ipCopy = std::string(convertedValue);
+
+  jboolean isCopyTwo;
+  const char *convertedValueTwo = (env)->GetStringUTFChars(event, &isCopyTwo);
+  std::string eventCopy = std::string(convertedValueTwo);
+
+  common::network::IP ipObj;
+  ipObj.ParseFromString(hex_to_string(ipCopy));
+
+  common::reactor::Event eventObj;
+  eventObj.ParseFromString(hex_to_string(eventCopy));
+
+
+  jboolean success = NetworkingClient::receive(ipObj, &eventObj);
+
+  std::string eventAsString = string_to_hex(eventObj.SerializeAsString());
+
+  const char *convertedBack = eventAsString.c_str();
+  *event = *env->NewStringUTF(convertedBack);
+
+  return success;
 }

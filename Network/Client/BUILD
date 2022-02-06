@@ -9,10 +9,13 @@ cc_library(
         "//Network/Protobuf:asio_adapting",
         "//Network/Protobuf:protobuf_helpers",
         "//Reactor/Base:event_and_message",
+        "//Tools/General/Strings:hex",
+        "//Tools/JNI:copy_jni_hdr_lib",
         "@com_google_absl//absl/container:flat_hash_map",
         "@com_google_absl//absl/strings",
         "@wolfssl",
     ],
+    alwayslink = True,
 )
 
 cc_test(

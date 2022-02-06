@@ -5,6 +5,7 @@
 /*
  * A client that can be used to send generic protobufs encapsulated as Event or EventAndMessage
  */
+#include <jni.h>
 #include <iostream>
 #include <string>
 
@@ -30,12 +31,28 @@
 #include "Network/Protobuf/asio_adapting.h"
 #include "Network/Protobuf/protobuf_helpers.h"
 #include "Reactor/Base/event_and_message.h"
+#include "Tools/General/Strings/hex.h"
 
 #ifdef _WIN32
 // Need to link with Ws2_32.lib, Mswsock.lib, and Advapi32.lib
 #pragma comment (lib, "Ws2_32.lib")
 #pragma comment (lib, "Mswsock.lib")
 #pragma comment (lib, "AdvApi32.lib")
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+/**
+ * JNI calls used to call the equivalent C++ functions below.
+ */
+JNIEXPORT jboolean JNICALL Java_NetworkingClient_setupAsClient(JNIEnv *, jstring);
+JNIEXPORT jboolean JNICALL Java_NetworkingClient_setupAsServer(JNIEnv *, jstring, jstring, jstring);
+JNIEXPORT jboolean JNICALL Java_NetworkingClient_send(JNIEnv *, jobject, jobject);
+JNIEXPORT jboolean JNICALL Java_NetworkingClient_receive(JNIEnv *, jobject, jobject);
+
+#ifdef __cplusplus
+}
 #endif
 
 class NetworkingClient {

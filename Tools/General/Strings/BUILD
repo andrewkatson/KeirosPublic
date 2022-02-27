@@ -8,3 +8,18 @@ cc_library(
     hdrs = ["hex.h"],
     deps = [],
 )
+
+cc_library(
+    name = "replace",
+    hdrs = [":replace.h"],
+    deps = [
+    ],
+)
+
+cc_library(
+    name = "big_int_from_string",
+    hdrs = [":big_int_from_string.h"],
+    deps = [
+        "@bigint",
+    ],
+)

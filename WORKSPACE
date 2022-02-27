@@ -81,6 +81,23 @@ http_archive(
     urls = ["https://github.com/abseil/abseil-cpp/archive/c512f118dde6ffd51cb7d8ac8804bbaf4d266c3a.zip"],
 )
 
+# boost
+git_repository(
+    name = "com_github_nelhage_rules_boost",
+    commit = "1e3a69bf2d5cd10c34b74f066054cd335d033d71",
+    remote = "https://github.com/nelhage/rules_boost",
+    shallow_since = "1591047380 -0700",
+)
+
+# gflags
+git_repository(
+    name = "com_github_gflags_gflags",
+    commit = "e171aa2d15ed9eb17054558e0b3a6a413bb01067",
+    remote = "https://github.com/gflags/gflags.git",
+    shallow_since = "1541971260 +0000",
+)
+
+# upb
 git_repository(
     name = "upb",
     commit = "d16bf99ac4658793748cda3251226059892b3b7b",
@@ -92,6 +109,34 @@ new_local_repository(
     name = "wolfssl",
     build_file = "external/BUILD.wolfssl",
     path = "external/wolfssl/wolfssl",
+)
+
+#json
+new_local_repository(
+    name = "json",
+    build_file = "external/BUILD.json",
+    path = "external/json/json",
+)
+
+#curl
+new_local_repository(
+    name = "curl",
+    build_file = "external/BUILD.curl",
+    path = "external/curl/curl",
+)
+
+#randomx
+new_local_repository(
+    name = "randomx",
+    build_file = "external/BUILD.randomx",
+    path = "external/randomx",
+)
+
+#bigint
+new_local_repository(
+    name = "bigint",
+    build_file = "external/BUILD.bigint",
+    path = "external/bigint",
 )
 
 load("@rules_cc//cc:repositories.bzl", "rules_cc_dependencies")

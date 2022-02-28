@@ -87,6 +87,50 @@ def wolfssl_win():
     make_command = "./autogen.sh && ./configure && make"
     os.system(make_command)
 
+def curl():
+    curl_path = workspace_path + "/external/curl"
+    chdir(curl_path)
+
+    clone_command = "git clone https://github.com/curl/curl.git"
+    os.system(clone_command)
+
+    inside_folder_path = curl_path + "/curl"
+    chdir(inside_folder_path)
+
+    make_command = "./buildconf && ./configure && make"
+    os.system(make_command)
+
+
+def json():
+    json_path = workspace_path + "/external/json"
+    chdir(json_path)
+
+    clone_command = "git clone https://github.com/andrewkatson/json.git"
+    os.system(clone_command)
+
+
+def randomx():
+    randomx_path = workspace_path + "/external"
+    chdir(randomx_path)
+
+    clone_command = "git clone https://github.com/tevador/RandomX.git"
+    os.system(clone_command)
+
+    make_command = "cd RandomX && mkdir build && cd build && cmake -DARCH=native .. && make"
+    os.system(make_command)
+
+    chdir(randomx_path)
+
+    mv_command = "mv RandomX randomx"
+    os.system(mv_command)
+
+
+def bigint():
+    bigint_path = workspace_path + "/external"
+    chdir(bigint_path)
+
+    clone_command = "git clone https://github.com/kasparsklavins/bigint.git"
+    os.system(clone_command)
 
 def update_java_path():
     global workspace_path
@@ -100,6 +144,14 @@ def main():
     if sys.platform == "linux":
         chdir(workspace_path)
         wolfssl()
+        chdir(worksapce_path) 
+        curl()
+        chdir(workspace_path)
+        json()
+        chdir(workspace_path)
+        randomx()
+        chdir(workspace_path)
+        bigint()
     elif sys.platform == "msys":
         chdir(workspace_path)
         wolfssl_win()

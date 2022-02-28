@@ -45,3 +45,7 @@ bazel-testlogs
 
 # External
 external/wolfssl
+external/curl
+external/bigint
+external/json
+external/randomx

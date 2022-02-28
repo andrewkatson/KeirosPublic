@@ -1,4 +1,4 @@
-# Configuration script to set up the dependencies for KeirosPublic automatically.
+# Configuration script to set up the dependencies for KeirosPublic automatically with Windows specific configuration
 
 import os
 
@@ -55,54 +55,5 @@ def find_workspace_path():
     else:
         workspace_path = Path(args.workspace_path)
 
+find_workspace_path()
 
-def wolfssl():
-    wolfssl_path = workspace_path + "/external/wolfssl"
-    os.chdir(wolfssl_path)
-
-    clone_command = "git clone https://github.com/andrewkatson/wolfssl.git"
-    os.system(clone_command)
-
-    inside_folder_path = wolfssl_path + "/wolfssl"
-    os.chdir(inside_folder_path)
-
-    build_command = "./configure --enable-ipv6 --enable-blake2 --enable-blake2s --enable-keygen --enable-certgen --enable-certreq --enable-ed25519 --enable-eccencrypt && make && sudo make install && mkdir build && cp /usr/local/lib/libwolfssl* " + inside_folder_path + "/build"
-    os.system(build_command)
-
-
-def chdir(path):
-    if not os.path.exists(path):
-        os.mkdir(path)
-
-    os.chdir(path)
-
-
-def wolfssl_win():
-    wolfssl_path = workspace_path / "external" / "wolfssl"
-    chdir(wolfssl_path)
-
-    clone_command = "git clone https://github.com/wolfSSL/wolfssl.git"
-    os.system(clone_command)
-
-    make_command = "./autogen.sh && ./configure && make"
-    os.system(make_command)
-
-
-def update_java_path():
-    global workspace_path
-    workspace_path = workspace_path / "bazel-bin/Network/Client"
-    os.environ["LD_LIBRARY_PATH"] = os.environ["LD_LIBRARY_PATH"] + ":" + workspace_path.__str__()
-
-
-def main():
-    find_workspace_path()
-    update_java_path()
-    if sys.platform == "linux":
-        chdir(workspace_path)
-        wolfssl()
-    elif sys.platform == "msys":
-        chdir(workspace_path)
-        wolfssl_win()
-
-
-main()

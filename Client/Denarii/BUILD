@@ -9,8 +9,6 @@ cc_library(
     deps = [
         "//Proto:wallet_cc_proto",
         "//ProtoBuf/TextProto:read_text_proto",
-        "//System:execute",
-        "//System:get_pid",
         "//Tools/General/Strings:big_int_from_string",
         "//Tools/General/Strings:replace",
         "//external:gflags",

@@ -2,9 +2,21 @@ package(default_visibility = ["//visibility:public"])
 
 # https://github.com/bazelbuild/bazel/blob/c97c77333cab2b78dc8ac76834fb873389f520d7/src/main/native/BUILD#L4
 
+config_setting(
+    name = "windows",
+    constraint_values = [
+        "@bazel_tools//platforms:windows",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+
 genrule(
     name = "copy_link_jni_md_header",
-    srcs = ["@bazel_tools//tools/jdk:jni_md_header-linux"],
+    srcs =  select({
+               "windows": ["@bazel_tools//tools/jdk:jni_md_header-windows"],
+               "//conditions:default": ["@bazel_tools//tools/jdk:jni_md_header-linux"],
+           }),
     outs = ["jni_md.h"],
     cmd = "cp -f $< $@",
 )

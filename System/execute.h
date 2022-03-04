@@ -1,5 +1,6 @@
 /*
  * Execute a command through the shell.
+ * DOESNT WORK ON WINDOWS
  */
 
 #ifndef EXECUTE_H

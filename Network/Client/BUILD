@@ -1,5 +1,13 @@
 package(default_visibility = ["//visibility:public"])
 
+config_setting(
+    name = "windows",
+    constraint_values = [
+        "@bazel_tools//platforms:windows",
+    ],
+    visibility = ["//visibility:public"],
+)
+
 cc_library(
     name = "networking_client",
     srcs = ["networking_client.cc"],
@@ -11,7 +19,6 @@ cc_library(
         "//Reactor/Base:event_and_message",
         "//Tools/General/Strings:hex",
         "//Tools/JNI:copy_jni_hdr_lib",
-        "@com_google_absl//absl/strings",
         "@wolfssl",
     ],
     alwayslink = True,

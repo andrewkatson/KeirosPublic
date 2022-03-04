@@ -5,5 +5,5 @@ package(default_visibility = ["//visibility:public"])
 cc_library(
     name = "wolfssl",
     srcs = glob(["**/build/**/*.lo"]) + glob(["**/build/**/*.so*"]) + glob(["**/build/**/*.a"]),
-    hdrs = glob(["**/**/*.h"]),
+    hdrs = glob(["**/*.h"]),
 )

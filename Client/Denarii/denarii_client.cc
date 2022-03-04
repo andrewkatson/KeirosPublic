@@ -21,62 +21,6 @@ static size_t writeCallback(void *contents, size_t size, size_t nmemb, void *use
 
 DenariiClient::~DenariiClient() = default;
 
-int DenariiClient::initDaemon() {
-
-  // This will make the path an executable command
-  const std::string &command = FLAGS_denariidPath;
-
-  // start the process in the background
-  std::cout << command << std::endl;
-
-
-  auto execCommand = [=]() { system(command.c_str()); };
-  mDaemon = absl::make_unique<std::thread>(execCommand);
-  mDaemon->detach();
-  return 0;
-}
-
-void DenariiClient::shutdownDaemon() {
-
-  std::vector<int> pids;
-  getPid("denariid", &pids);
-
-  for (auto &pid : pids) {
-    std::cout << " PID \n \n \n" << pid << std::endl;
-    kill(pid, SIGINT);
-  }
-}
-
-int DenariiClient::initWalletRPC() {
-
-  protobuf::keiros::readTextProto(FLAGS_walletInfoPath, &mWallet);
-
-  // This will make the path an executable command with the needed flags.
-  auto userPassword = mWallet.user() + ":" + mWallet.user_password();
-
-  std::string command =
-      FLAGS_walletRpcServerPath + " --rpc-bind-port=8080 --wallet-dir=" + "/denarii/wallet" +
-      " --rpc-login=" + userPassword;
-
-  std::cout << command << std::endl;
-
-  auto execCommand = [=]() { system(command.c_str()); };
-  mWalletRPC = absl::make_unique<std::thread>(execCommand);
-  mWalletRPC->detach();
-  return 0;
-}
-
-void DenariiClient::shutdownWalletRPC() {
-
-  std::vector<int> pids;
-  getPid("denarii_wallet", &pids);
-
-  for (auto &pid : pids) {
-    std::cout << " PID \n \n \n" << pid << std::endl;
-    kill(pid, SIGINT);
-  }
-}
-
 void DenariiClient::sendCommandToWalletRPC(const std::string &method, const std::string &params, std::string *output) {
   sendCommand("http://127.0.0.1", "8080", method, params, output);
 }
@@ -262,7 +206,7 @@ void DenariiClient::setCurrentWallet(const common::Wallet &wallet) {
 bool DenariiClient::initRandomX(std::string &mode, char *key, int keySize) {
   randomx_flags flags = randomx_get_flags();
 
-  boost::to_lower(mode);
+  std::transform (mode.begin(), mode.end(), mode.begin(), ::tolower);
 
   mMode = mode;
   if (mode == "fast") {
@@ -339,7 +283,7 @@ void DenariiClient::shutdownRandomX() {
 }
 
 int DenariiClient::attemptMineBlock(int nonce, int attempts, const std::string &blockHashingBlob,
-                                    const std::string &blockTemplateBlob, u_int64_t difficulty,
+                                    const std::string &blockTemplateBlob, uint64_t difficulty,
                                     std::string *minedBlock) {
 
   int currentAttempts = 0;
@@ -394,7 +338,7 @@ bool DenariiClient::getBlockHashingBlob(const Wallet &wallet, nlohmann::json *re
 
 bool DenariiClient::meetingDifficulty(const Bigint &difficulty, char *hash, int hashSize) {
   // 2^256 -1
-  Bigint base = 115792089237316195423570985008687907853269984665640564039457584007913129639935;
+  Bigint base = "115792089237316195423570985008687907853269984665640564039457584007913129639935";
 
   std::string hashAsStr = std::string(hash);
   Bigint hashAsInt = common::tools::fromString(hashAsStr);

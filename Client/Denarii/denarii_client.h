@@ -20,8 +20,6 @@
 
 #include "Proto/wallet.pb.h"
 #include "ProtoBuf/TextProto/read_text_proto.h"
-#include "System/execute.h"
-#include "System/get_pid.h"
 #include "Tools/General/Strings/big_int_from_string.h"
 #include "Tools/General/Strings/replace.h"
 
@@ -40,15 +38,6 @@ class DenariiClient {
 public:
 
   ~DenariiClient();
-
-  // Starts up a denarii daemon on local host (127.0.0.1) and port 8424.
-  int initDaemon();
-  void shutdownDaemon();
-
-  // Connects to the wallet rpc on local host (127.0.0.1) and port 8080.
-  // Requires that a wallet file and the password are specified in a text proto file.
-  int initWalletRPC();
-  void shutdownWalletRPC();
 
   // Sends a command to the wallet rpc or daemon. Params should be a json object in its string representation.
   // This does not work with non json rpcs.
@@ -86,7 +75,7 @@ public:
   // If successful then minedBlock will be set. Returns the current nonce.
   // Also specifies the wallet that will receive the funds.
   int attemptMineBlock(int nonce, int attempts, const std::string& blockHashingBlob, const std::string& blockTemplateBlob,
-      u_int64_t difficulty, std::string* minedBlock);
+      uint64_t difficulty, std::string* minedBlock);
 
   // Packs a nonce into the blob. Be it a block hashing blob or a block template blob.
   static std::string packNonce(const std::string& blob, const std::string& nonce);
@@ -111,9 +100,6 @@ private:
   randomx_dataset* mRandomXDataSet = nullptr;
 
   std::string mMode;
-
-  pid_t mDaemonProcess;
-  pid_t mWalletRPCProcess;
 };
 
 } // denarii_services

@@ -70,7 +70,7 @@ void NetworkingClient::cleanupWolfssl(const common::network::IP &ip) {
 }
 
 void NetworkingClient::ipToString(const common::network::IP &ip, std::string *str) {
-  *str = absl::StrCat(ip.block(), ":", std::to_string(ip.port()));
+  *str = ip.block() + ":" + std::to_string(ip.port());
 }
 
 bool NetworkingClient::setupAsServer(const std::string &caCertPath, const std::string &serverCertPath,

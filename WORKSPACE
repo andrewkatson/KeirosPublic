@@ -102,6 +102,7 @@ git_repository(
     name = "upb",
     commit = "d16bf99ac4658793748cda3251226059892b3b7b",
     remote = "https://github.com/protocolbuffers/upb.git",
+    shallow_since = "1558031931 -0700"
 )
 
 #wolfssl

@@ -9,3 +9,9 @@ py_binary(
     srcs = ["configure.py"],
     deps = [],
 )
+
+py_binary(
+    name = "configure_win",
+    srcs = ["configure_win.py"],
+    deps = [],
+)

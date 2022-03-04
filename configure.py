@@ -56,39 +56,43 @@ def find_workspace_path():
         workspace_path = Path(args.workspace_path)
 
 
-def wolfssl():
-    wolfssl_path = workspace_path + "/external/wolfssl"
-    os.chdir(wolfssl_path)
-
-    clone_command = "git clone https://github.com/andrewkatson/wolfssl.git"
-    os.system(clone_command)
-
-    inside_folder_path = wolfssl_path + "/wolfssl"
-    os.chdir(inside_folder_path)
-
-    build_command = "./configure --enable-ipv6 --enable-blake2 --enable-blake2s --enable-keygen --enable-certgen --enable-certreq --enable-ed25519 --enable-eccencrypt && make && sudo make install && mkdir build && cp /usr/local/lib/libwolfssl* " + inside_folder_path + "/build"
-    os.system(build_command)
-
-
 def chdir(path):
     if not os.path.exists(path):
-        os.mkdir(path)
+        os.makedirs(path)
 
     os.chdir(path)
 
 
-def wolfssl_win():
-    wolfssl_path = workspace_path / "external" / "wolfssl"
+def wolfssl():
+    wolfssl_path = workspace_path / "external/wolfssl"
     chdir(wolfssl_path)
 
     clone_command = "git clone https://github.com/wolfSSL/wolfssl.git"
     os.system(clone_command)
 
-    make_command = "./autogen.sh && ./configure && make"
+    inside_folder_path = str(wolfssl_path) + "/wolfssl"
+    chdir(inside_folder_path)
+
+    build_command = "./configure --enable-ipv6 --enable-blake2 --enable-blake2s --enable-keygen --enable-certgen --enable-certreq --enable-ed25519 --enable-eccencrypt && make && sudo make install && mkdir build && cp /usr/local/lib/libwolfssl* " + inside_folder_path + "/build"
+    os.system(build_command)
+
+
+def wolfssl_win():
+    wolfssl_path = workspace_path / "external/wolfssl"
+    chdir(wolfssl_path)
+
+    clone_command = "git clone https://github.com/wolfSSL/wolfssl.git"
+    os.system(clone_command)
+
+    inside_folder_path = str(wolfssl_path) + "/wolfssl"
+    os.chdir(inside_folder_path)
+
+    make_command = "./autogen.sh &&  ./configure --host=none-none-none && make"
     os.system(make_command)
 
+
 def curl():
-    curl_path = workspace_path + "/external/curl"
+    curl_path = workspace_path / "external/curl"
     chdir(curl_path)
 
     clone_command = "git clone https://github.com/curl/curl.git"
@@ -102,7 +106,7 @@ def curl():
 
 
 def json():
-    json_path = workspace_path + "/external/json"
+    json_path = workspace_path / "external/json"
     chdir(json_path)
 
     clone_command = "git clone https://github.com/andrewkatson/json.git"
@@ -110,7 +114,7 @@ def json():
 
 
 def randomx():
-    randomx_path = workspace_path + "/external"
+    randomx_path = workspace_path / "external"
     chdir(randomx_path)
 
     clone_command = "git clone https://github.com/tevador/RandomX.git"
@@ -126,35 +130,44 @@ def randomx():
 
 
 def bigint():
-    bigint_path = workspace_path + "/external"
+    bigint_path = workspace_path / "external"
     chdir(bigint_path)
 
     clone_command = "git clone https://github.com/kasparsklavins/bigint.git"
     os.system(clone_command)
 
-def update_java_path():
-    global workspace_path
-    workspace_path = workspace_path / "bazel-bin/Network/Client"
-    os.environ["LD_LIBRARY_PATH"] = os.environ["LD_LIBRARY_PATH"] + ":" + workspace_path.__str__()
+
+def import_dependencies():
+    chdir(workspace_path)
+    wolfssl()
+    chdir(workspace_path)
+    curl()
+    chdir(workspace_path)
+    json()
+    chdir(workspace_path)
+    randomx()
+    chdir(workspace_path)
+    bigint()
+
+
+def import_dependencies_win():
+    chdir(workspace_path)
+    wolfssl_win()
+    chdir(workspace_path)
+    json()
+    chdir(workspace_path)
+    bigint()
+    chdir(workspace_path)
 
 
 def main():
     find_workspace_path()
-    update_java_path()
     if sys.platform == "linux":
-        chdir(workspace_path)
-        wolfssl()
-        chdir(worksapce_path) 
-        curl()
-        chdir(workspace_path)
-        json()
-        chdir(workspace_path)
-        randomx()
-        chdir(workspace_path)
-        bigint()
+        print("Importing dependencies \n\n\n\n\n")
+        import_dependencies()
     elif sys.platform == "msys":
-        chdir(workspace_path)
-        wolfssl_win()
+        print("Importing dependencies Win \n\n\n\n\n")
+        import_dependencies_win()
 
 
 main()

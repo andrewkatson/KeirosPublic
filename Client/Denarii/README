@@ -1,0 +1,14 @@
+
+
+In order to use this file you need to run a denarii daemon and a denarii wallet rpc server. Assuming you already have
+them you can run the following commands.
+
+```
+./denariid
+```
+
+Make sure you are storing all your wallets in /denarii/wallet
+
+```
+./denarii-wallet-rpc-server --rpc-bind-port=8080 --wallet-dir="/denarii/wallet"
+```

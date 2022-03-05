@@ -5,14 +5,14 @@ using nlohmann::json;
 
 namespace common {
 
-DEFINE_string(walletInfoPath, "", "An absolute file path to a text proto of a Wallet.");
+randomx_cache* DenariiClient::mRandomXCache = nullptr;
+randomx_vm* DenariiClient::mRandomXVM = nullptr;
+randomx_dataset* DenariiClient::mRandomXDataSet = nullptr;
 
-DEFINE_string(denariidPath, "", "An absolute file path to the denarii daemon binary.");
-
-DEFINE_string(walletRpcServerPath, "", "An absolute file path to the denarii wallet rpc server binary");
+std::string DenariiClient::mMode = "";
 
 namespace {
-static size_t writeCallback(void *contents, size_t size, size_t nmemb, void *userp) {
+size_t writeCallback(void *contents, size_t size, size_t nmemb, void *userp) {
   ((std::string *) userp)->append((char *) contents, size * nmemb);
   return size * nmemb;
 }
@@ -54,13 +54,7 @@ void DenariiClient::sendCommand(const std::string &ip, const std::string &port, 
     std::cout << postField << std::endl;
     curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postField.c_str());
 
-    auto userPassword = mWallet.user() + ":" + mWallet.user_password();
-
-    std::cout << userPassword << std::endl;
-
     // Set the authorization to use the username and password.
-    curl_easy_setopt(curl, CURLOPT_USERNAME, mWallet.user().c_str());
-    curl_easy_setopt(curl, CURLOPT_PASSWORD, mWallet.user_password().c_str());
     curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
 
     // Give a call back function and a string to write the callback data into.
@@ -80,15 +74,6 @@ void DenariiClient::sendCommand(const std::string &ip, const std::string &port, 
     curl_easy_cleanup(curl);
   }
 
-  // This is the old command we were using. Going to save for posterity until it gets pushed to source repo.
-  const std::string &command =
-      R"(curl -u )" + mWallet.user() + ":" + mWallet.user_password() +
-      R"( --digest http://127.0.0.1:8080/json_rpc -d '{"jsonrpc":"2.0","id":"0","method":")" + method +
-      R"(","params":)" +
-      params + R"(}' -H 'Content-Type: application/json')";
-
-
-  std::cout << command << std::endl;
   std::cout << readBuffer << std::endl;
   *output = readBuffer;
 }
@@ -338,8 +323,11 @@ bool DenariiClient::getBlockHashingBlob(const Wallet &wallet, nlohmann::json *re
 
 bool DenariiClient::meetingDifficulty(const Bigint &difficulty, char *hash, int hashSize) {
   // 2^256 -1
+#ifdef _WIN32
   Bigint base = "115792089237316195423570985008687907853269984665640564039457584007913129639935";
-
+#else
+  Bigint base = 115792089237316195423570985008687907853269984665640564039457584007913129639935;
+#endif
   std::string hashAsStr = std::string(hash);
   Bigint hashAsInt = common::tools::fromString(hashAsStr);
   return hashAsInt * difficulty <= base;
@@ -357,5 +345,143 @@ bool DenariiClient::attemptSubmitBlock(const std::string &minedBlock) {
   return output.contains("result");
 }
 
+JNIEXPORT void JNICALL Java_com_keiros_client_denarii_DenariiClient_createWallet(JNIEnv *env, jobject obj, jstring wallet) {
+  const char *convertedValue = (env)->GetStringUTFChars(wallet, nullptr);
+  std::string walletCopy = std::string(convertedValue);
+
+  common::Wallet walletObj;
+  walletObj.ParseFromString(hex_to_string(walletCopy));
+  DenariiClient::createWallet(walletObj);
+
+  env->ReleaseStringUTFChars(wallet, convertedValue);
+}
+JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_transferMoney(JNIEnv *env, jobject obj, jdouble amount, jstring sender, jstring receiver) {
+
+  const char *convertedValueSender = (env)->GetStringUTFChars(sender, nullptr);
+  std::string walletSender = std::string(convertedValueSender);
+
+  common::Wallet senderWallet;
+  senderWallet.ParseFromString(hex_to_string(walletSender));
+
+  const char *convertedValueReceiver = (env)->GetStringUTFChars(receiver, nullptr);
+  std::string walletReceiver = std::string(convertedValueReceiver);
+
+  common::Wallet receiverWallet;
+  receiverWallet.ParseFromString(hex_to_string(walletReceiver));
+
+
+  bool success = DenariiClient::transferMoney(amount, senderWallet, receiverWallet);
+
+  env->ReleaseStringUTFChars(sender, convertedValueSender);
+  env->ReleaseStringUTFChars(receiver, convertedValueReceiver);
+
+  return success;
+}
+JNIEXPORT void JNICALL Java_com_keiros_client_denarii_DenariiClient_getAddress(JNIEnv *env, jobject obj, jstring wallet) {
+
+  common::Wallet walletObj;
+  DenariiClient::getAddress(&walletObj);
+
+  std::string walletAsString = string_to_hex(walletObj.SerializeAsString());
+
+  const char *convertedBack = walletAsString.c_str();
+  *wallet = *env->NewStringUTF(convertedBack);
+}
+JNIEXPORT jdouble JNICALL Java_com_keiros_client_denarii_DenariiClient_getBalanceOfWallet(JNIEnv *env, jobject obj, jstring wallet) {
+
+  const char *convertedValue = (env)->GetStringUTFChars(wallet, nullptr);
+  std::string walletCopy = std::string(convertedValue);
+
+  common::Wallet walletObj;
+  walletObj.ParseFromString(hex_to_string(walletCopy));
+  double balance = DenariiClient::getBalanceOfWallet(walletObj);
+
+  env->ReleaseStringUTFChars(wallet, convertedValue);
+
+  return balance;
+}
+JNIEXPORT void JNICALL Java_com_keiros_client_denarii_DenariiClient_setCurrentWallet(JNIEnv *env, jobject obj, jstring wallet) {
+
+  const char *convertedValue = (env)->GetStringUTFChars(wallet, nullptr);
+  std::string walletCopy = std::string(convertedValue);
+
+  common::Wallet walletObj;
+  walletObj.ParseFromString(hex_to_string(walletCopy));
+  DenariiClient::setCurrentWallet(walletObj);
+
+  env->ReleaseStringUTFChars(wallet, convertedValue);
+}
+JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_getBlockHashingBlob(JNIEnv *env, jobject obj, jstring wallet, jstring result) {
+
+  const char *convertedValue = (env)->GetStringUTFChars(wallet, nullptr);
+  std::string walletCopy = std::string(convertedValue);
+
+  common::Wallet walletObj;
+  walletObj.ParseFromString(hex_to_string(walletCopy));
+
+  json resultJson;
+
+  bool success = DenariiClient::getBlockHashingBlob(walletObj, &resultJson);
+
+  std::string resultJsonHex = string_to_hex(resultJson.dump());
+
+  const char *convertedBack = resultJsonHex.c_str();
+  *result = *env->NewStringUTF(convertedBack);
+
+  env->ReleaseStringUTFChars(wallet, convertedValue);
+
+  return success;
+}
+JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_initRandomX(JNIEnv *env, jobject obj, jstring mode, jstring key) {
+  const char *convertedValueMode = (env)->GetStringUTFChars(mode, nullptr);
+  std::string modeStr = std::string(hex_to_string(convertedValueMode));
+
+  const char *convertedValueKey = (env)->GetStringUTFChars(key, nullptr);
+  std::string keyAsChar = std::string(hex_to_string(convertedValueKey));
+
+  bool success = DenariiClient::initRandomX(modeStr, const_cast<char*>(keyAsChar.c_str()), keyAsChar.length());
+
+  env->ReleaseStringUTFChars(mode, convertedValueMode);
+  env->ReleaseStringUTFChars(key, convertedValueKey);
+
+  return success;
+}
+JNIEXPORT void JNICALL Java_com_keiros_client_denarii_DenariiClient_shutdownRandomX(JNIEnv *env, jobject obj) {
+  DenariiClient::shutdownRandomX();
+}
+
+JNIEXPORT jint JNICALL Java_com_keiros_client_denarii_DenariiClient_attemptMineBlock(JNIEnv *env, jobject obj, jint nonce,
+    jint attempts, jstring blockHashingBlob, jstring blockTemplateBlob, jlong difficulty, jstring minedBlock) {
+
+  const char *convertedValueHashing = (env)->GetStringUTFChars(blockHashingBlob, nullptr);
+  std::string hashingCopy = std::string(hex_to_string(convertedValueHashing));
+
+  const char *convertedValueTemplate = (env)->GetStringUTFChars(blockTemplateBlob, nullptr);
+  std::string templateCopy = std::string(hex_to_string(convertedValueTemplate));
+
+  std::string minedBlockStr;
+  int currentNonce = DenariiClient::attemptMineBlock(nonce, attempts, hashingCopy, templateCopy, difficulty, &minedBlockStr);
+
+  std::string minedBlockHex = string_to_hex(minedBlockStr);
+
+  const char *convertedBack = minedBlockHex.c_str();
+  *minedBlock = *env->NewStringUTF(convertedBack);
+
+  env->ReleaseStringUTFChars(blockHashingBlob, convertedValueHashing);
+  env->ReleaseStringUTFChars(blockTemplateBlob, convertedValueTemplate);
+
+  return currentNonce;
+}
+JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_attemptSubmitBlock(JNIEnv *env, jobject obj, jstring minedBlock) {
+
+  const char *convertedValue = (env)->GetStringUTFChars(minedBlock, nullptr);
+  std::string minedBlockCopy = std::string(convertedValue);
+
+  bool success = DenariiClient::attemptSubmitBlock(minedBlockCopy);
+
+  env->ReleaseStringUTFChars(minedBlock, convertedValue);
+
+  return success;
+}
 
 } // common

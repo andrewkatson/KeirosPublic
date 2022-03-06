@@ -18,4 +18,12 @@ cc_library(
         "@json",
         "@randomx",
     ],
+    alwayslink = True
 )
+
+cc_binary(
+    name = "denarii_client_so",
+    linkshared = True,
+    deps = [":denarii_client"],
+)
+

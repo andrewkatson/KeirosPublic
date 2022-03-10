@@ -10,16 +10,15 @@
 #include <cstdio>
 #include <cstdlib>
 #include <jni.h>
-#include <thread>
 
 #include "curl/curl.h"
 #include "include/nlohmann/json.hpp"
 #include "src/bigint.h"
 #include "src/randomx.h"
 
+#include "Client/RandomX/randomx_client.h"
 #include "Proto/wallet.pb.h"
 #include "ProtoBuf/TextProto/read_text_proto.h"
-#include "Tools/General/Strings/big_int_from_string.h"
 #include "Tools/General/Strings/hex.h"
 #include "Tools/General/Strings/replace.h"
 
@@ -80,7 +79,11 @@ public:
   // Sets the current open wallet to the passed wallet.
   static void setCurrentWallet(const common::Wallet& wallet);
 
+  // Gets a block hashing blob for the current block. True if successful. False otherwise
+  static bool getBlockHashingBlob(const Wallet& wallet, nlohmann::json* result);
+
   // Initializes RandomX so it can be used to mine. Returns true on success and false otherwise.
+  static bool initRandomX(std::string& mode, const std::string& key);
   static bool initRandomX(std::string& mode, char* key, int keySize);
 
   // Shuts down RandomX.
@@ -92,24 +95,9 @@ public:
   static int attemptMineBlock(int nonce, int attempts, const std::string& blockHashingBlob, const std::string& blockTemplateBlob,
       uint64_t difficulty, std::string* minedBlock);
 
-  // Packs a nonce into the blob. Be it a block hashing blob or a block template blob.
-  static std::string packNonce(const std::string& blob, const std::string& nonce);
-
-  // True if we are meeting the difficulty and false if not.
-  static bool meetingDifficulty(const Dodecahedron::Bigint& difficulty, char* hash, int hashSize);
-
-  // Gets a block hashing blob for the current block. True if successful. False otherwise
-  static bool getBlockHashingBlob(const Wallet& wallet, nlohmann::json* result);
-
   // Attempt to submit a mined block. Returns true on success and false otherwise.
   static bool attemptSubmitBlock(const std::string& minedBlock);
 
-private:
-  static randomx_cache* mRandomXCache;
-  static randomx_vm* mRandomXVM;
-  static randomx_dataset* mRandomXDataSet;
-
-  static std::string mMode;
 };
 
 } // denarii_services

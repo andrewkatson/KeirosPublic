@@ -100,7 +100,7 @@ js_proto_library(
 )
 
 py_proto_library(
-    name = "currency_management_user_info_resonse_py_proto",
+    name = "currency_management_user_info_response_py_proto",
     deps = ["currency_management_user_info_response_proto"],
 )
 
@@ -127,7 +127,7 @@ js_proto_library(
 )
 
 py_proto_library(
-    name = "walet_info_request_py_proto",
+    name = "wallet_info_request_py_proto",
     deps = [":wallet_info_request_proto"],
 )
 
@@ -155,7 +155,7 @@ js_proto_library(
 )
 
 py_proto_library(
-    name = "walet_info_response_py_proto",
+    name = "wallet_info_response_py_proto",
     deps = [":wallet_info_response_proto"],
 )
 
@@ -212,7 +212,7 @@ js_proto_library(
 )
 
 py_proto_library(
-    name = "currency_management_config_resposne_py_proto",
+    name = "currency_management_config_response_py_proto",
     deps = [":currency_management_config_response_proto"],
 )
 

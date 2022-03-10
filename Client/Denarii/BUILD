@@ -7,18 +7,16 @@ cc_library(
     srcs = ["denarii_client.cc"],
     hdrs = ["denarii_client.h"],
     deps = [
+        "//Client/RandomX:randomx_client",
         "//Proto:wallet_cc_proto",
         "//ProtoBuf/TextProto:read_text_proto",
-        "//Tools/General/Strings:big_int_from_string",
         "//Tools/General/Strings:hex",
         "//Tools/General/Strings:replace",
         "//Tools/JNI:copy_jni_hdr_lib",
-        "@bigint",
         "@curl",
         "@json",
-        "@randomx",
     ],
-    alwayslink = True
+    alwayslink = True,
 )
 
 cc_binary(
@@ -27,3 +25,11 @@ cc_binary(
     deps = [":denarii_client"],
 )
 
+py_binary(
+    name = "denarii_client_py",
+    srcs = ["denarii_client.py"],
+    data = ["//Client/RandomX:randomx_client_so"],
+    imports = [],
+    main = "denarii_client.py",
+    deps = ["//:workspace_path_finder"],
+)

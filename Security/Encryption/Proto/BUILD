@@ -7,12 +7,12 @@ package(default_visibility = ["//visibility:public"])
 
 js_proto_library(
     name = "encryption_instance_js_proto",
-    protos = ["asymmetric_encryption_proto"]
+    protos = [":encryption_instance_proto"]
 )
 
 py_proto_library(
     name = "encryption_instance_py_proto",
-    deps = ["asymmetric_encryption_proto"]
+    deps = [":encryption_instance_proto"]
 )
 
 java_proto_library(

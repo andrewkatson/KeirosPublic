@@ -63,7 +63,7 @@ for path in pathlib.Path('.').rglob('**/*BUILD'):
     # to see if they all work.
     base_command_path = full_path_without_slash.split('/BUILD')[0] + ':'
 
-    # In case this is the top level BUILD File it needs to be handeled
+    # In case this is the top level BUILD File it needs to be handled
     base_command_path = ":" if base_command_path == "BUILD:" else base_command_path
 
     # Get every single "name" field per build file.

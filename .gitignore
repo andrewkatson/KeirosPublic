@@ -36,6 +36,11 @@
 
 # Bazel with Idea
 .ijwb/
+.idea/
+
+# Pycharm 
+__pycache__/
+
 
 # Bazel 
 bazel-bin

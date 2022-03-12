@@ -8,26 +8,6 @@ import requests
 import sys
 import workspace_path_finder
 
-
-def get_home():
-    linux_home = ""
-    windows_home = ""
-
-    try:
-        linux_home = pathlib.Path(os.environ["HOME"])
-    except Exception as e:
-        print(e)
-    try:
-        windows_home = pathlib.Path(os.environ["HOMEDRIVE"] + os.environ["HOMEPATH"])
-    except Exception as e:
-        print(e)
-
-    if os.path.exists(linux_home):
-        return linux_home
-    else:
-        return windows_home
-
-
 # Append path with the location of all moved python protos
 sys.path.append(str(workspace_path_finder.get_home() / "py_proto"))
 
@@ -220,3 +200,30 @@ class DenariiClient:
         res = self.send_command_to_daemon("submit_block", params)
 
         return "error" not in res
+
+    def restore_wallet(self, wallet):
+        """
+        Restore a deterministic wallet.
+        @param wallet The wallet to be restored. Should have the name, password, and seed phrase.
+        @return True on success and false otherwise.
+        """
+
+        params = {
+            "filename": wallet.name,
+            "password": wallet.password,
+            "seed": wallet.phrase,
+        }
+
+        res = self.send_command_to_wallet_rpc("restore_deterministic_wallet", params)
+
+        if "result" not in res:
+            return False
+
+        result = res["result"]
+
+        if result["info"] != "Wallet has been restored successfully.":
+            return False
+
+        wallet.address = result["address"]
+
+        return True

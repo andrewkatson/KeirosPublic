@@ -202,22 +202,48 @@ bool DenariiClient::getBlockHashingBlob(const Wallet &wallet, nlohmann::json *re
   return result->contains("blockhashing_blob");
 }
 
+bool DenariiClient::restoreWallet(common::Wallet *wallet) {
+  json input;
+  input["filename"] = wallet->name();
+  input["password"] = wallet->password();
+  input["seed"] = wallet->phrase();
+
+  std::string outputSTr;
+  sendCommandToWalletRPC("restore_deterministic_wallet", input.dump(), &outputSTr);
+
+  json output = json::parse(outputSTr);
+
+  if (!output.contains("result")) {
+    return false;
+  }
+
+  json result = output["result"];
+
+  if (result["info"] != "Wallet has been restored successfully.") {
+    return false;
+  }
+
+  *wallet->mutable_address() = result["address"];
+
+  return true;
+}
+
 bool DenariiClient::initRandomX(std::string &mode, const std::string &key) {
   return initRandomX(mode, const_cast<char*>(key.c_str()), key.length());
 }
 
 bool DenariiClient::initRandomX(std::string &mode, char *key, int keySize) {
-  return randomx_client::initRandomX(mode, key, keySize);
+  return randomx_client::RandomXClient::initRandomX(mode, key, keySize);
 }
 
 void DenariiClient::shutdownRandomX() {
-  randomx_client::shutdownRandomX();
+  randomx_client::RandomXClient::shutdownRandomX();
 }
 
 int DenariiClient::attemptMineBlock(int nonce, int attempts, const std::string &blockHashingBlob,
                                     const std::string &blockTemplateBlob, uint64_t difficulty,
                                     std::string *minedBlock) {
-  return randomx_client::attemptMineBlock(nonce, attempts, blockHashingBlob, blockTemplateBlob, difficulty, minedBlock);
+  return randomx_client::RandomXClient::attemptMineBlock(nonce, attempts, blockHashingBlob, blockTemplateBlob, difficulty, minedBlock);
 }
 
 bool DenariiClient::attemptSubmitBlock(const std::string &minedBlock) {
@@ -314,6 +340,24 @@ JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_getBlock
 
   const char *convertedBack = resultJsonHex.c_str();
   *result = *env->NewStringUTF(convertedBack);
+
+  env->ReleaseStringUTFChars(wallet, convertedValue);
+
+  return success;
+}
+JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_restoreWallet(JNIEnv *env, jobject obj, jstring wallet) {
+  const char *convertedValue = (env)->GetStringUTFChars(wallet, nullptr);
+  std::string walletCopy = std::string(convertedValue);
+
+  common::Wallet walletObj;
+  walletObj.ParseFromString(hex_to_string(walletCopy));
+
+  bool success = DenariiClient::restoreWallet(&walletObj);
+
+  std::string walletAsString = string_to_hex(walletObj.SerializeAsString());
+
+  const char *convertedBack = walletAsString.c_str();
+  *wallet = *env->NewStringUTF(convertedBack);
 
   env->ReleaseStringUTFChars(wallet, convertedValue);
 

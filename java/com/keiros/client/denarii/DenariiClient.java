@@ -137,4 +137,21 @@ public class DenariiClient {
     public static boolean attemptSubmitBlockMethod(String minedBlock) throws  Exception {
         return attemptSubmitBlock(Hex.getHexString(minedBlock.getBytes()));
     }
+
+    /**
+     * Restore a deterministic wallet.
+     * @param wallet The wallet to be restored.
+     * @return True on succes and false otherwise.
+     */
+    private static native boolean restoreWallet(String wallet);
+
+    public static boolean restoreWallet(Wallet wallet) throws Exception {
+        String walletStr = Hex.getHexString(wallet.toByteArray());
+
+        boolean success = restoreWallet(walletStr);
+
+        wallet.parseFrom(Hex.hexStringToByteArray(walletStr));
+
+        return success;
+    }
 }

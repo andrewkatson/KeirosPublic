@@ -24,4 +24,7 @@ message Wallet {
   
   // If this is a user wallet then this is their identifier
   security.Identifier user_id = 6;
+
+  // The mnemonic phrase associated with this wallet.
+  string phrase = 7;
 }

@@ -10,7 +10,7 @@ std::string mMode = "";
 
 namespace randomx_client {
 
-bool initRandomX(std::string &mode, char *key, int keySize) {
+bool RandomXClient::initRandomX(std::string &mode, char *key, int keySize) {
   randomx_flags flags = randomx_get_flags();
 
   std::transform(mode.begin(), mode.end(), mode.begin(), ::tolower);
@@ -26,7 +26,7 @@ bool initRandomX(std::string &mode, char *key, int keySize) {
   } catch (const std::exception &e) {
     std::cout << e.what() << std::endl;
     mRandomXCache = nullptr;
-  } catch (std::excepption *e) {
+  } catch (std::exception *e) {
     std::cout << e->what() << std::endl;
     mRandomXCache = nullptr;
   }
@@ -76,7 +76,7 @@ bool initRandomX(std::string &mode, char *key, int keySize) {
   return true;
 }
 
-void shutdownRandomX() {
+void RandomXClient::shutdownRandomX() {
 
   if (mRandomXVM != nullptr) {
     randomx_destroy_vm(mRandomXVM);
@@ -89,7 +89,7 @@ void shutdownRandomX() {
   }
 }
 
-int attemptMineBlock(int nonce, int attempts, const std::string &blockHashingBlob,
+int RandomXClient::attemptMineBlock(int nonce, int attempts, const std::string &blockHashingBlob,
                                     const std::string &blockTemplateBlob, uint64_t difficulty,
                                     std::string *minedBlock) {
 
@@ -118,14 +118,14 @@ int attemptMineBlock(int nonce, int attempts, const std::string &blockHashingBlo
   return nonce;
 }
 
-std::string packNonce(const std::string &blob, const std::string &nonce) {
+std::string RandomXClient::packNonce(const std::string &blob, const std::string &nonce) {
   std::string b = blob.substr(0, 39);
   b = b + nonce;
   b = b + blob.substr(43);
   return b;
 }
 
-bool meetingDifficulty(const Bigint &difficulty, char *hash, int hashSize) {
+bool RandomXClient::meetingDifficulty(const Bigint &difficulty, char *hash, int hashSize) {
   // 2^256 -1
 #ifdef _WIN32
   Bigint base = "115792089237316195423570985008687907853269984665640564039457584007913129639935";

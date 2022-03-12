@@ -35,6 +35,7 @@ JNIEXPORT void JNICALL Java_com_keiros_client_denarii_DenariiClient_getAddress(J
 JNIEXPORT jdouble JNICALL Java_com_keiros_client_denarii_DenariiClient_getBalanceOfWallet(JNIEnv *, jobject, jstring);
 JNIEXPORT void JNICALL Java_com_keiros_client_denarii_DenariiClient_setCurrentWallet(JNIEnv *, jobject, jstring);
 JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_getBlockHashingBlob(JNIEnv *, jobject, jstring, jstring);
+JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_restoreWallet(JNIEnv*, jobject, jstring);
 JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_initRandomX(JNIEnv *, jobject, jstring, jstring);
 JNIEXPORT void JNICALL Java_com_keiros_client_denarii_DenariiClient_shutdownRandomX(JNIEnv *, jobject);
 JNIEXPORT jint JNICALL Java_com_keiros_client_denarii_DenariiClient_attemptMineBlock(JNIEnv *, jobject, jint, jint, jstring, jstring, jlong, jstring);
@@ -97,6 +98,9 @@ public:
 
   // Attempt to submit a mined block. Returns true on success and false otherwise.
   static bool attemptSubmitBlock(const std::string& minedBlock);
+
+  // Restore a deterministic wallet from a mnemonic phrase. The wallet should have the name, password, and phrase in it.
+  static bool restoreWallet(common::Wallet* wallet);
 
 };
 

@@ -208,10 +208,10 @@ bool DenariiClient::restoreWallet(common::Wallet *wallet) {
   input["password"] = wallet->password();
   input["seed"] = wallet->phrase();
 
-  std::string outputSTr;
-  sendCommandToWalletRPC("restore_deterministic_wallet", input.dump(), &outputSTr);
+  std::string outputStr;
+  sendCommandToWalletRPC("restore_deterministic_wallet", input.dump(), &outputStr);
 
-  json output = json::parse(outputSTr);
+  json output = json::parse(outputStr);
 
   if (!output.contains("result")) {
     return false;
@@ -224,6 +224,25 @@ bool DenariiClient::restoreWallet(common::Wallet *wallet) {
   }
 
   *wallet->mutable_address() = result["address"];
+
+  return true;
+}
+
+bool DenariiClient::querySeed(common::Wallet *wallet) {
+  json input;
+  input["key_type"] = "mnemonic";
+
+  std::string outputStr;
+  sendCommandToWalletRPC("query_key", input.dump(), &outputStr);
+
+  json output = json::parse(outputStr);
+
+  if (!output.contains("result")) {
+    return false;
+  }
+
+  json result = output["result"];
+  wallet->set_phrase(result["key"]);
 
   return true;
 }
@@ -353,6 +372,24 @@ JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_restoreW
   walletObj.ParseFromString(hex_to_string(walletCopy));
 
   bool success = DenariiClient::restoreWallet(&walletObj);
+
+  std::string walletAsString = string_to_hex(walletObj.SerializeAsString());
+
+  const char *convertedBack = walletAsString.c_str();
+  *wallet = *env->NewStringUTF(convertedBack);
+
+  env->ReleaseStringUTFChars(wallet, convertedValue);
+
+  return success;
+}
+JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_querySeed(JNIEnv* env, jobject obj, jstring wallet) {
+  const char *convertedValue = (env)->GetStringUTFChars(wallet, nullptr);
+  std::string walletCopy = std::string(convertedValue);
+
+  common::Wallet walletObj;
+  walletObj.ParseFromString(hex_to_string(walletCopy));
+
+  bool success = DenariiClient::querySeed(&walletObj);
 
   std::string walletAsString = string_to_hex(walletObj.SerializeAsString());
 

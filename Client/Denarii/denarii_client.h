@@ -36,6 +36,7 @@ JNIEXPORT jdouble JNICALL Java_com_keiros_client_denarii_DenariiClient_getBalanc
 JNIEXPORT void JNICALL Java_com_keiros_client_denarii_DenariiClient_setCurrentWallet(JNIEnv *, jobject, jstring);
 JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_getBlockHashingBlob(JNIEnv *, jobject, jstring, jstring);
 JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_restoreWallet(JNIEnv*, jobject, jstring);
+JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_querySeed(JNIEnv*, jobject, jstring);
 JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_initRandomX(JNIEnv *, jobject, jstring, jstring);
 JNIEXPORT void JNICALL Java_com_keiros_client_denarii_DenariiClient_shutdownRandomX(JNIEnv *, jobject);
 JNIEXPORT jint JNICALL Java_com_keiros_client_denarii_DenariiClient_attemptMineBlock(JNIEnv *, jobject, jint, jint, jstring, jstring, jlong, jstring);
@@ -101,6 +102,9 @@ public:
 
   // Restore a deterministic wallet from a mnemonic phrase. The wallet should have the name, password, and phrase in it.
   static bool restoreWallet(common::Wallet* wallet);
+
+  // Query for the mnemonic seed of the wallet. Assumes the current wallet has been set.
+  static bool querySeed(common::Wallet* wallet);
 
 };
 

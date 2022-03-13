@@ -227,3 +227,25 @@ class DenariiClient:
         wallet.address = result["address"]
 
         return True
+
+    def query_seed(self, wallet):
+        """
+        Get the mnemonic seed for a wallet. Should have set the current wallet.
+        @param wallet The wallet to store the seed phrase
+        @return True on success and false otherwise
+        """
+
+        params = {
+            "key_type": "mnemonic"
+        }
+
+        res = self.send_command_to_wallet_rpc("query_key", params)
+
+        if "result" not in res:
+            return False
+
+        result = res["result"]
+
+        wallet.phrase = result["key"]
+
+        return True

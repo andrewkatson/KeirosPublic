@@ -139,7 +139,7 @@ public class DenariiClient {
     }
 
     /**
-     * Restore a deterministic wallet.
+     * Restore a deterministic wallet. Assumes name and password and phrase are set.
      * @param wallet The wallet to be restored.
      * @return True on succes and false otherwise.
      */
@@ -149,6 +149,23 @@ public class DenariiClient {
         String walletStr = Hex.getHexString(wallet.toByteArray());
 
         boolean success = restoreWallet(walletStr);
+
+        wallet.parseFrom(Hex.hexStringToByteArray(walletStr));
+
+        return success;
+    }
+
+    /**
+     * Get the mnemonic seed for a wallet. Assumes current wallet has been set,
+     * @param wallet The wallet to be store the seed phrase for.
+     * @return True on success and false otherwise.
+     */
+    private static native boolean querySeed(String wallet);
+
+    public static boolean querySeed(Wallet wallet) throws Exception {
+        String walletStr = Hex.getHexString(wallet.toByteArray());
+
+        boolean success = querySeed(walletStr);
 
         wallet.parseFrom(Hex.hexStringToByteArray(walletStr));
 

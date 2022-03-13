@@ -1,6 +1,7 @@
 # A file that moves all the generated python protobufs to %HOME%/py_proto or
 # %HOMEDRIVE%%HOMEPATH%\py_proto
 # so that they can be readily imported. This assumes build_check was run.
+# Needs to be run like ./bazel-bin/move_py_proto after its built.
 
 import pathlib
 import os
@@ -60,4 +61,8 @@ for path in pathlib.Path('.').rglob('**/*BUILD'):
                 os.makedirs(py_proto_path)
 
             full_py_proto_path = f"{py_proto_path}/{edited_name}"
+
+            if os.path.exists(full_py_proto_path):
+                os.remove(full_py_proto_path)
+
             shutil.copyfile(path_to_proto, full_py_proto_path)

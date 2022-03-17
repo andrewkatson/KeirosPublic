@@ -43,18 +43,26 @@ class DenariiClient:
         @param params The params to pass the rpc method
         @return The json representing the response
         """
+        # Empty json if there is no result
+        res = json.dumps({})
+        try:
+            inputs = {
+                "method": method,
+                "params": params,
+                "jsonrpc": "2.0",
+                "id": 0,
+            }
+            print("Sending " + str(inputs))
+            res = requests.post(ip + ":" + port + "/json_rpc", data=json.dumps(inputs),
+                                headers={"content-type": "application/json"})
+        except Exception as e:
+            print("Ran into problem sending request " + str(e))
 
-        inputs = {
-            "method": method,
-            "params": params,
-            "jsonrpc": "2.0",
-            "id": 0,
-        }
-
-        res = requests.post(ip + ":" + port + "/json_rpc", data=json.dumps(inputs),
-                            headers={"content-type": "application/json"})
-
-        res = res.json()
+        try:
+            print("Received " + str(res))
+            res = res.json()
+        except Exception as e:
+            print("Ran into problem with the response " + str(e))
 
         return res
 
@@ -161,7 +169,7 @@ class DenariiClient:
         """
 
         params = {
-            "filename": wallet.address,
+            "filename": wallet.name,
             "password": wallet.password
         }
 

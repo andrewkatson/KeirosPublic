@@ -10,5 +10,5 @@ them you can run the following commands.
 Make sure you are storing all your wallets in /denarii/wallet
 
 ```
-./denarii-wallet-rpc-server --rpc-bind-port=8080 --wallet-dir="/denarii/wallet"
+./denarii-wallet-rpc-server --rpc-bind-port=8080 --wallet-dir="/denarii/wallet" --disable-rpc-login
 ```

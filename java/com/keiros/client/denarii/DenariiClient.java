@@ -16,10 +16,10 @@ public class DenariiClient {
      * Create a Denarii wallet
      * @param wallet The hex encoded string representation of the wallet to create.
      */
-    private static native void createWallet(String wallet);
+    private static native boolean createWallet(String wallet);
 
-    public static void createWallet(Wallet wallet) throws Exception {
-        createWallet(Hex.getHexString(wallet.toByteArray()));
+    public static boolean createWallet(Wallet wallet) throws Exception {
+        return createWallet(Hex.getHexString(wallet.toByteArray()));
     }
 
     /**
@@ -39,12 +39,13 @@ public class DenariiClient {
      * Get the primary address for the wallet set as the current wallet. Assumes setCurrentWallet has already been called.
      * @param wallet The hex encoded string representation of the wallet passed back.
      */
-    private static native void getAddress(String wallet);
+    private static native boolean getAddress(String wallet);
 
-    public static void getAddress(Wallet wallet) throws Exception {
+    public static boolean getAddress(Wallet wallet) throws Exception {
         String hexWallet = "";
-        getAddress(hexWallet);
+        boolean success = getAddress(hexWallet);
         wallet.parseFrom(Hex.hexStringToByteArray(hexWallet));
+        return  success;
     }
 
     /**
@@ -62,10 +63,10 @@ public class DenariiClient {
      * Set the current wallet as the one specified.
      * @param wallet The hex encoded string representation of the wallet to get the value of.
      */
-    private static native void setCurrentWallet(String wallet);
+    private static native boolean setCurrentWallet(String wallet);
 
-    public static void setCurrentWallet(Wallet wallet) throws Exception {
-        setCurrentWallet(Hex.getHexString(wallet.toByteArray()));
+    public static boolean setCurrentWallet(Wallet wallet) throws Exception {
+        return setCurrentWallet(Hex.getHexString(wallet.toByteArray()));
     }
 
     /**
@@ -166,6 +167,41 @@ public class DenariiClient {
         String walletStr = Hex.getHexString(wallet.toByteArray());
 
         boolean success = querySeed(walletStr);
+
+        wallet.parseFrom(Hex.hexStringToByteArray(walletStr));
+
+        return success;
+    }
+
+    /**
+     * Creates a sub address for the current wallet with no label.
+     * @param wallet The wallet to store the sub address in
+     * @return True on success and false otherwise
+     */
+    private static native boolean createNoLabelAddress(String wallet);
+
+    public static boolean createAddress(Wallet wallet) throws Exception {
+        String walletStr = Hex.getHexString(wallet.toByteArray());
+
+        boolean success = createNoLabelAddress(walletStr);
+
+        wallet.parseFrom(Hex.hexStringToByteArray(walletStr));
+
+        return success;
+    }
+
+    /**
+     * Creates a sub address for the current wallet with a label.
+     * @param label The label to give the wallet
+     * @param wallet The wallet to store the sub address in
+     * @return True on success and false otherwise
+     */
+    private static native boolean createAddress(String label, String wallet);
+
+    public static boolean createAddress(String label, Wallet wallet) throws Exception {
+        String walletStr = Hex.getHexString(wallet.toByteArray());
+
+        boolean success = createAddress(label, walletStr);
 
         wallet.parseFrom(Hex.hexStringToByteArray(walletStr));
 

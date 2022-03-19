@@ -12,6 +12,7 @@ option java_outer_classname = "WalletClass";
 package common;
 
 message Wallet {
+  // The primary address
   bytes address = 1;
   // password for the wallet
   string password = 2;
@@ -27,4 +28,7 @@ message Wallet {
 
   // The mnemonic phrase associated with this wallet.
   string phrase = 7;
+
+  // Secondary addresses
+  repeated bytes sub_addresses = 8;
 }

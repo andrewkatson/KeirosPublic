@@ -72,7 +72,7 @@ void DenariiClient::sendCommand(const std::string &ip, const std::string &port, 
 }
 
 
-void DenariiClient::createWallet(const common::Wallet &wallet) {
+bool DenariiClient::createWallet(const common::Wallet &wallet) {
 
   json input;
   input["filename"] = wallet.name();
@@ -80,12 +80,19 @@ void DenariiClient::createWallet(const common::Wallet &wallet) {
   input["language"] = "English";
 
   // There is no output expected
-  std::string output;
-  sendCommand("create_wallet", input.dump(), &output);
+  std::string outputStr;
+  sendCommand("create_wallet", input.dump(), &outputStr);
 
+  json output = json::parse(outputStr);
+
+  if (!output.contains("result")) {
+    return false;
+  }
+
+  return true;
 }
 
-void DenariiClient::getAddress(common::Wallet *wallet) {
+bool DenariiClient::getAddress(common::Wallet *wallet) {
 
 
   json input;
@@ -97,14 +104,25 @@ void DenariiClient::getAddress(common::Wallet *wallet) {
   json output = json::parse(outputStr);
 
   if (!output.contains("result")) {
-    return;
+    return false;
   }
 
   json result = input["result"];
 
   if (result.contains("address")) {
     wallet->set_address(result["address"]);
+
+    json addresses = result["addresses"];
+
+    for (auto& address : addresses) {
+        if (address["label"] != "Primary Account") {
+            wallet->add_sub_addresses(address["address"]);
+        }
+    }
+    return true;
   }
+
+  return false;
 }
 
 bool DenariiClient::transferMoney(double amount, const common::Wallet &sender, const common::Wallet &receiver) {
@@ -168,7 +186,7 @@ double DenariiClient::getBalanceOfWallet(const common::Wallet &wallet) {
   return result["balance"];
 }
 
-void DenariiClient::setCurrentWallet(const common::Wallet &wallet) {
+bool DenariiClient::setCurrentWallet(const common::Wallet &wallet) {
 
   json input;
 
@@ -182,6 +200,11 @@ void DenariiClient::setCurrentWallet(const common::Wallet &wallet) {
 
   // There is no output expected so we do nothing with it.
   json output = json::parse(outputStr);
+
+  if (!output.contains("result")) {
+    return false;
+  }
+  return true;
 }
 
 bool DenariiClient::getBlockHashingBlob(const Wallet &wallet, nlohmann::json *result) {
@@ -247,6 +270,31 @@ bool DenariiClient::querySeed(common::Wallet *wallet) {
   return true;
 }
 
+bool DenariiClient::createAddress(common::Wallet *wallet) {
+    return DenariiClient::createAddress("", wallet);
+}
+
+bool DenariiClient::createAddress(const std::string &label, common::Wallet* wallet) {
+    json input;
+    input["account_index"] = 0;
+    input["label"] = label;
+
+    std::string outputStr;
+    sendCommandToWalletRPC("create_address", input.dump(), &outputStr);
+
+    json output = json::parse(outputStr);
+
+    if (!output.contains("result")) {
+        return false;
+    }
+
+    json result = output["result"];
+
+    wallet->add_sub_addresses(result["address"]);
+
+    return true;
+}
+
 bool DenariiClient::initRandomX(std::string &mode, const std::string &key) {
   return initRandomX(mode, const_cast<char*>(key.c_str()), key.length());
 }
@@ -277,15 +325,17 @@ bool DenariiClient::attemptSubmitBlock(const std::string &minedBlock) {
   return !output.contains("error");
 }
 
-JNIEXPORT void JNICALL Java_com_keiros_client_denarii_DenariiClient_createWallet(JNIEnv *env, jobject obj, jstring wallet) {
+JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_createWallet(JNIEnv *env, jobject obj, jstring wallet) {
   const char *convertedValue = (env)->GetStringUTFChars(wallet, nullptr);
   std::string walletCopy = std::string(convertedValue);
 
   common::Wallet walletObj;
   walletObj.ParseFromString(hex_to_string(walletCopy));
-  DenariiClient::createWallet(walletObj);
+  bool success = DenariiClient::createWallet(walletObj);
 
   env->ReleaseStringUTFChars(wallet, convertedValue);
+
+  return success;
 }
 JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_transferMoney(JNIEnv *env, jobject obj, jdouble amount, jstring sender, jstring receiver) {
 
@@ -309,15 +359,17 @@ JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_transfer
 
   return success;
 }
-JNIEXPORT void JNICALL Java_com_keiros_client_denarii_DenariiClient_getAddress(JNIEnv *env, jobject obj, jstring wallet) {
+JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_getAddress(JNIEnv *env, jobject obj, jstring wallet) {
 
   common::Wallet walletObj;
-  DenariiClient::getAddress(&walletObj);
+  bool success = DenariiClient::getAddress(&walletObj);
 
   std::string walletAsString = string_to_hex(walletObj.SerializeAsString());
 
   const char *convertedBack = walletAsString.c_str();
   *wallet = *env->NewStringUTF(convertedBack);
+
+  return success;
 }
 JNIEXPORT jdouble JNICALL Java_com_keiros_client_denarii_DenariiClient_getBalanceOfWallet(JNIEnv *env, jobject obj, jstring wallet) {
 
@@ -332,16 +384,18 @@ JNIEXPORT jdouble JNICALL Java_com_keiros_client_denarii_DenariiClient_getBalanc
 
   return balance;
 }
-JNIEXPORT void JNICALL Java_com_keiros_client_denarii_DenariiClient_setCurrentWallet(JNIEnv *env, jobject obj, jstring wallet) {
+JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_setCurrentWallet(JNIEnv *env, jobject obj, jstring wallet) {
 
   const char *convertedValue = (env)->GetStringUTFChars(wallet, nullptr);
   std::string walletCopy = std::string(convertedValue);
 
   common::Wallet walletObj;
   walletObj.ParseFromString(hex_to_string(walletCopy));
-  DenariiClient::setCurrentWallet(walletObj);
+  bool success = DenariiClient::setCurrentWallet(walletObj);
 
   env->ReleaseStringUTFChars(wallet, convertedValue);
+
+  return success;
 }
 JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_getBlockHashingBlob(JNIEnv *env, jobject obj, jstring wallet, jstring result) {
 
@@ -397,6 +451,46 @@ JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_querySee
   *wallet = *env->NewStringUTF(convertedBack);
 
   env->ReleaseStringUTFChars(wallet, convertedValue);
+
+  return success;
+}
+JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_createNoLabelAddress(JNIEnv* env, jobject obj, jstring wallet) {
+  const char *convertedValue = (env)->GetStringUTFChars(wallet, nullptr);
+  std::string walletCopy = std::string(convertedValue);
+
+  common::Wallet walletObj;
+  walletObj.ParseFromString(hex_to_string(walletCopy));
+
+  bool success = DenariiClient::createAddress(&walletObj);
+
+  std::string walletAsString = string_to_hex(walletObj.SerializeAsString());
+
+  const char *convertedBack = walletAsString.c_str();
+  *wallet = *env->NewStringUTF(convertedBack);
+
+  env->ReleaseStringUTFChars(wallet, convertedValue);
+
+  return success;
+}
+JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_createAddress(JNIEnv* env, jobject obj, jstring label, jstring wallet) {
+  const char *convertedValue = (env)->GetStringUTFChars(wallet, nullptr);
+  std::string walletCopy = std::string(convertedValue);
+
+  const char *convertedValueTwo = (env)->GetStringUTFChars(label, nullptr);
+  std::string labelCopy = std::string(convertedValueTwo);
+
+  common::Wallet walletObj;
+  walletObj.ParseFromString(hex_to_string(walletCopy));
+
+  bool success = DenariiClient::createAddress(labelCopy, &walletObj);
+
+  std::string walletAsString = string_to_hex(walletObj.SerializeAsString());
+
+  const char *convertedBack = walletAsString.c_str();
+  *wallet = *env->NewStringUTF(convertedBack);
+
+  env->ReleaseStringUTFChars(wallet, convertedValue);
+  env->ReleaseStringUTFChars(label, convertedValueTwo);
 
   return success;
 }

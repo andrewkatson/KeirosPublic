@@ -29,14 +29,16 @@ extern "C" {
 /**
  * JNI calls used to call the equivalent C++ functions below.
  */
-JNIEXPORT void JNICALL Java_com_keiros_client_denarii_DenariiClient_createWallet(JNIEnv *, jobject, jstring);
+JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_createWallet(JNIEnv *, jobject, jstring);
 JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_transferMoney(JNIEnv *, jobject, jdouble, jstring, jstring);
-JNIEXPORT void JNICALL Java_com_keiros_client_denarii_DenariiClient_getAddress(JNIEnv *, jobject, jstring);
+JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_getAddress(JNIEnv *, jobject, jstring);
 JNIEXPORT jdouble JNICALL Java_com_keiros_client_denarii_DenariiClient_getBalanceOfWallet(JNIEnv *, jobject, jstring);
-JNIEXPORT void JNICALL Java_com_keiros_client_denarii_DenariiClient_setCurrentWallet(JNIEnv *, jobject, jstring);
+JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_setCurrentWallet(JNIEnv *, jobject, jstring);
 JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_getBlockHashingBlob(JNIEnv *, jobject, jstring, jstring);
 JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_restoreWallet(JNIEnv*, jobject, jstring);
 JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_querySeed(JNIEnv*, jobject, jstring);
+JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_createNoLabelAddress(JNIEnv*, jobject, jstring);
+JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_createAddress(JNIEnv*, jobject, jstring, jstring);
 JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_initRandomX(JNIEnv *, jobject, jstring, jstring);
 JNIEXPORT void JNICALL Java_com_keiros_client_denarii_DenariiClient_shutdownRandomX(JNIEnv *, jobject);
 JNIEXPORT jint JNICALL Java_com_keiros_client_denarii_DenariiClient_attemptMineBlock(JNIEnv *, jobject, jint, jint, jstring, jstring, jlong, jstring);
@@ -65,21 +67,24 @@ public:
   static void sendCommand(const std::string &method, const std::string &params, std::string *output);
 
   // Creates a wallet with the given wallet info. By default will use English as the language.
-  static void createWallet(const common::Wallet& wallet);
+  static bool createWallet(const common::Wallet& wallet);
+
+  // Creates a new sub address.
+  static bool createAddress(common::Wallet* wallet);
+  static bool createAddress(const std::string &label, common::Wallet* wallet);
 
   // Transfers the specified amount of money from one wallet to the other.
   static bool transferMoney(double amount, const common::Wallet &sender, const common::Wallet &receiver);
 
   // Gets an address for the given wallet info. And fills the address field.
   // This assumes you have already set the current wallet.
-  // TODO support multiple addresses
-  static void getAddress(common::Wallet *wallet);
+  static bool getAddress(common::Wallet *wallet);
 
   // Retrieves the balance of the wallet.
   static double getBalanceOfWallet(const common::Wallet& wallet);
 
   // Sets the current open wallet to the passed wallet.
-  static void setCurrentWallet(const common::Wallet& wallet);
+  static bool setCurrentWallet(const common::Wallet& wallet);
 
   // Gets a block hashing blob for the current block. True if successful. False otherwise
   static bool getBlockHashingBlob(const Wallet& wallet, nlohmann::json* result);

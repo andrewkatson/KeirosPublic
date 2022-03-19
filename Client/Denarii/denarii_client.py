@@ -61,6 +61,7 @@ class DenariiClient:
         try:
             print("Received " + str(res))
             res = res.json()
+            print(str(res))
         except Exception as e:
             print("Ran into problem with the response " + str(e))
 
@@ -79,7 +80,44 @@ class DenariiClient:
         }
 
         # no output expected
-        self.send_command_to_wallet_rpc("create_wallet", params)
+        res = self.send_command_to_wallet_rpc("create_wallet", params)
+
+        if "result" in res:
+            return True
+
+        return False
+
+    def create_no_label_address(self, wallet):
+        """
+        Create an address with no label
+        @param wallet The wallet to store the sub address created in
+        @return True on success and false otherwise
+        """
+        return self.create_address("", wallet)
+
+    def create_address(self, label, wallet):
+        """
+        Create an address with no label
+        @param label The label to give the wallet
+        @param wallet The wallet to store the sub address created in
+        @return True on success and false otherwise
+        """
+
+        params = {
+            "account_index": 0,
+            "label": label
+        }
+
+        res = self.send_command_to_wallet_rpc("create_address", params)
+
+        if "result" not in res:
+            return False
+
+        result = res["result"]
+
+        wallet.sub_addresses.append(bytes(result["address"], 'utf-8'))
+
+        return True
 
     def get_address(self, wallet):
         """
@@ -94,12 +132,24 @@ class DenariiClient:
         result = self.send_command_to_wallet_rpc("get_address", params)
 
         if "result" not in result:
-            return
+            return False
 
         result_dict = result["result"]
 
+        # Add the primary address
         if "address" in result_dict:
-            wallet.address = result_dict["address"]
+            wallet.address = bytes(result_dict["address"], 'utf-8')
+
+            # Add any secondary addresses
+            if "addresses" in result_dict:
+
+                for address in result_dict["addresses"]:
+                    if address["label"] != "Primary account":
+
+                        wallet.sub_addresses.append(bytes(address["address"], 'utf-8'))
+
+            return True
+        return False
 
     def transfer_money(self, amount, sender, receiver):
         """
@@ -110,9 +160,9 @@ class DenariiClient:
         @return The amount sent
         """
 
-        senderCurrentAmount = self.get_balance_of_wallet(sender)
+        sender_current_amount = self.get_balance_of_wallet(sender)
 
-        if senderCurrentAmount < amount:
+        if sender_current_amount < amount:
             return False
 
         # First set the current wallet to be the sender's wallet
@@ -134,7 +184,7 @@ class DenariiClient:
 
         result = res["result"]
 
-        return result["amount"]
+        return "amount" in result
 
     def get_balance_of_wallet(self, wallet):
         """
@@ -173,7 +223,12 @@ class DenariiClient:
             "password": wallet.password
         }
 
-        self.send_command_to_wallet_rpc("open_wallet", params)
+        res = self.send_command_to_wallet_rpc("open_wallet", params)
+
+        if "result" in res:
+            return True
+
+        return False
 
     def get_block_hashing_blob(self, wallet):
         """
@@ -232,7 +287,7 @@ class DenariiClient:
         if result["info"] != "Wallet has been restored successfully.":
             return False
 
-        wallet.address = result["address"]
+        wallet.address = bytes(result["address"], 'utf-8')
 
         return True
 

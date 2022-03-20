@@ -207,4 +207,27 @@ public class DenariiClient {
 
         return success;
     }
+
+    /**
+     * Start the mining process.
+     * @param doBackgroundMining Whether to mine in the background
+     * @param ignoreBattery Whether to ignore the battery
+     * @param threads The number of threads to use
+     * @return True on success and false otherwise
+     */
+    private static native boolean startMining(Boolean doBackgroundMining, Boolean ignoreBattery, Integer threads);
+
+    public static boolean startMiningMethod(Boolean doBackgroundMining, Boolean ignoreBattery, Integer threads) {
+        return startMining(doBackgroundMining, ignoreBattery, threads);
+    }
+
+     /**
+     * Stop the mining process.
+     * @return True on success and false otherwise
+     */
+    private static native boolean stopMining();
+
+    public static boolean stopMiningMethod() {
+        return stopMining();
+    }
 }

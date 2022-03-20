@@ -41,8 +41,45 @@ void DenariiClient::sendCommand(const std::string &ip, const std::string &port, 
   if (curl) {
     curl_easy_setopt(curl, CURLOPT_URL, ip + ":" + port + "/json_rpc");
     curl_easy_setopt(curl, CURLOPT_POST, 1L);
-    const std::string &postField = R"({"jsonrpc":"2.0","id":"0","method":")" + method +
-                                   R"(","params":)" + params + "}";
+    const std::string postField = "{\"jsonrpc\":\"" + std::to_string(2.0) + "\", \"id\":\"" + std::to_string(0) + "\", \"method\":\"" + method + "\", \"params\": " + params + "}";
+    std::cout << postField << std::endl;
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postField.c_str());
+
+    // Set the authorization to use the username and password.
+    curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
+
+    // Give a call back function and a string to write the callback data into.
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
+    //curl_easy_setopt(curl, CURLOPT_VERBOSE, true);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 1);
+
+    // Set the content type to be application json.
+    struct curl_slist *hs = nullptr;
+    hs = curl_slist_append(hs, "Accept: application/json");
+    hs = curl_slist_append(hs, "Content-Type: application/json");
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, hs);
+
+    res = curl_easy_perform(curl);
+    curl_easy_cleanup(curl);
+  }
+
+  std::cout << readBuffer << std::endl;
+  *output = readBuffer;
+}
+
+void DenariiClient::sendCommandToOldDaemon(const std::string &method,
+                                const std::string &params, std::string *output) {
+  CURL *curl;
+  CURLcode res;
+  std::string readBuffer;
+
+  curl = curl_easy_init();
+  if (curl) {
+    curl_easy_setopt(curl, CURLOPT_URL, "http://127.0.0.1:8424/" + method);
+    curl_easy_setopt(curl, CURLOPT_POST, 1L);
+    const std::string &postField = params;
 
     std::cout << postField << std::endl;
     curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postField.c_str());
@@ -295,6 +332,31 @@ bool DenariiClient::createAddress(const std::string &label, common::Wallet* wall
     return true;
 }
 
+bool DenariiClient::startMining(bool doBackgroundMining, bool ignoreBattery, int threads) {
+    json input;
+    input["do_background_mining"] = doBackgroundMining;
+    input["ignore_battery"] = ignoreBattery;
+    input["threads_count"] = threads;
+
+    std::string outputStr;
+    sendCommandToWalletRPC("start_mining", input.dump(), &outputStr);
+
+    json output = json::parse(outputStr);
+
+    return output.contains("result");
+}
+
+bool DenariiClient::stopMining() {
+  json input;
+
+  std::string outputStr;
+  sendCommandToWalletRPC("stop_mining", input.dump(), &outputStr);
+
+  json output = json::parse("result");
+
+  return output.contains("result");
+}
+
 bool DenariiClient::initRandomX(std::string &mode, const std::string &key) {
   return initRandomX(mode, const_cast<char*>(key.c_str()), key.length());
 }
@@ -493,6 +555,12 @@ JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_createAd
   env->ReleaseStringUTFChars(label, convertedValueTwo);
 
   return success;
+}
+JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_startMining(JNIEnv *env, jobject obj, jboolean doBackgroundMining, jboolean ignoreBattery, jint threads) {
+  return DenariiClient::startMining(doBackgroundMining, ignoreBattery, threads);
+}
+JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_stopMining(JNIEnv *env, jobject obj) {
+  return DenariiClient::stopMining();
 }
 JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_initRandomX(JNIEnv *env, jobject obj, jstring mode, jstring key) {
   const char *convertedValueMode = (env)->GetStringUTFChars(mode, nullptr);

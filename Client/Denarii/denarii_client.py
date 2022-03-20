@@ -312,3 +312,34 @@ class DenariiClient:
         wallet.phrase = result["key"]
 
         return True
+
+    def start_mining(self, do_background_mining, ignore_battery, threads):
+        """
+        Start mining on this machine to the set wallet.
+        @param do_background_mining Whether to mine in the background or not
+        @param ignore_battery Whether to ignore the battery
+        @param threads how many threads to use
+        @return True on success and false otherwise
+        """
+
+        params = {
+            "threads_count": threads,
+            "do_background_mining": do_background_mining,
+            "ignore_battery": ignore_battery
+        }
+
+        res = self.send_command_to_wallet_rpc("start_mining", params)
+
+        return "result" in res
+
+    def stop_mining(self):
+        """
+        Stop mining on this machine
+        @return True on success and false otherwise
+        """
+
+        params = {}
+
+        res = self.send_command_to_wallet_rpc("stop_mining", params)
+
+        return "result" in res

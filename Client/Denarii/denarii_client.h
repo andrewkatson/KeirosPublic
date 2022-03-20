@@ -39,6 +39,8 @@ JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_restoreW
 JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_querySeed(JNIEnv*, jobject, jstring);
 JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_createNoLabelAddress(JNIEnv*, jobject, jstring);
 JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_createAddress(JNIEnv*, jobject, jstring, jstring);
+JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_startMining(JNIEnv*, jobject, jboolean, jboolean, jint);
+JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_stopMining(JNIEnv*, jobject);
 JNIEXPORT jboolean JNICALL Java_com_keiros_client_denarii_DenariiClient_initRandomX(JNIEnv *, jobject, jstring, jstring);
 JNIEXPORT void JNICALL Java_com_keiros_client_denarii_DenariiClient_shutdownRandomX(JNIEnv *, jobject);
 JNIEXPORT jint JNICALL Java_com_keiros_client_denarii_DenariiClient_attemptMineBlock(JNIEnv *, jobject, jint, jint, jstring, jstring, jlong, jstring);
@@ -62,6 +64,7 @@ public:
   // Or: https://web.getmonero.org/resources/developer-guides/wallet-rpc.html
   static void sendCommandToWalletRPC(const std::string& method, const std::string& params, std::string* output);
   static void sendCommandToDaemon(const std::string& method, const std::string& params, std::string* output);
+  static void sendCommandToOldDaemon(const std::string& method, const std::string& params, std::string *output);
   static void sendCommand(const std::string& ip, const std::string& port, const std::string& method,
       const std::string& params, std::string* output);
   static void sendCommand(const std::string &method, const std::string &params, std::string *output);
@@ -88,6 +91,12 @@ public:
 
   // Gets a block hashing blob for the current block. True if successful. False otherwise
   static bool getBlockHashingBlob(const Wallet& wallet, nlohmann::json* result);
+
+  // Starts mining with the specified number of threads.
+  static bool startMining(bool doBackgroundMining, bool ignoreBattery, int threads);
+
+  // Stop mining with the specified number of threads.
+  static bool stopMining();
 
   // Initializes RandomX so it can be used to mine. Returns true on success and false otherwise.
   static bool initRandomX(std::string& mode, const std::string& key);

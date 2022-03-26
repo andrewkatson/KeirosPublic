@@ -1,7 +1,7 @@
 
 
 In order to use this file you need to run a denarii daemon and a denarii wallet rpc server. Assuming you already have
-them you can run the following commands.
+them you can run the following commands. You might need `--no-igd` for the daemon.
 
 ```
 ./denariid

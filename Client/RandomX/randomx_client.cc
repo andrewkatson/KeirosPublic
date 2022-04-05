@@ -2,11 +2,11 @@
 
 using Dodecahedron::Bigint;
 
-randomx_cache *mRandomXCache = nullptr;
-randomx_vm *mRandomXVM = nullptr;
-randomx_dataset *mRandomXDataSet = nullptr;
+randomx_cache *randomx_client::RandomXClient::mRandomXCache = nullptr;
+randomx_vm *randomx_client::RandomXClient::mRandomXVM = nullptr;
+randomx_dataset *randomx_client::RandomXClient::mRandomXDataSet = nullptr;
 
-std::string mMode = "";
+std::string randomx_client::RandomXClient::mMode = "";
 
 namespace randomx_client {
 

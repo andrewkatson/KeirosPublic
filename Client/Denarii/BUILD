@@ -28,7 +28,6 @@ cc_binary(
 py_binary(
     name = "denarii_client_py",
     srcs = ["denarii_client.py"],
-    data = ["//Client/RandomX:randomx_client_so"],
     imports = [],
     main = "denarii_client.py",
     deps = ["//:workspace_path_finder"],

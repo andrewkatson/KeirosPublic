@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <jni.h>
 
+#define CURL_STATICLIB
 #include "curl/curl.h"
 #include "include/nlohmann/json.hpp"
 #include "src/bigint.h"

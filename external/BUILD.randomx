@@ -7,3 +7,10 @@ cc_library(
   hdrs = glob(["**/randomx.h"]),
   alwayslink = True
 )
+
+cc_library(
+  name = "randomx_windows",
+  srcs =  glob(["**/*.cpp", "**/*.c", "**/jit_compiler_x86_static.asm"], exclude = ["**/tests/*", "**/jit_compiler_a64.cpp", "**/jit_compiler_a64_static.cpp"]),
+  hdrs = glob(["**/*.h", "**/*.hpp"], exclude = ["**/jit_compiler_a64.hpp", "**/jit_compiler_a64_static.hpp"]),
+  linkopts = ["/DEFAULTLIB:Advapi32"],
+)

@@ -66,3 +66,4 @@ for path in pathlib.Path('.').rglob('**/*BUILD'):
                 os.remove(full_py_proto_path)
 
             shutil.copyfile(path_to_proto, full_py_proto_path)
+            

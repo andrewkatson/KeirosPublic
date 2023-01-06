@@ -9,6 +9,7 @@ http_archive(
     name = "com_google_protobuf",
     strip_prefix = "protobuf-21.9",
     urls = ["https://github.com/protocolbuffers/protobuf/archive/v21.9.zip"],
+    sha256 = "5babb8571f1cceafe0c18e13ddb3be556e87e12ceea3463d6b0d0064e6cc1ac3"
 )
 
 # gRPC code -- has py_proto_library rule which is useful.
@@ -41,6 +42,12 @@ http_archive(
     sha256 = "8400c511d64eb4d26f92c5ec72535ebd0f843067515244e8b50817b0786427f9",
     strip_prefix = "abseil-cpp-c512f118dde6ffd51cb7d8ac8804bbaf4d266c3a",
     urls = ["https://github.com/abseil/abseil-cpp/archive/c512f118dde6ffd51cb7d8ac8804bbaf4d266c3a.zip"],
+)
+
+http_archive(
+    name = "build_bazel_rules_nodejs",
+    sha256 = "c2ad51299792d5af3b258f1dd71b3b57eff9424c2e1797d9c1d65717d95da03a",
+    urls = ["https://github.com/bazelbuild/rules_nodejs/releases/download/5.7.3/rules_nodejs-5.7.3.tar.gz"],
 )
 
 #gson
@@ -129,3 +136,7 @@ rules_proto_grpc_repos()
 load("@rules_proto_grpc//:repositories.bzl", "rules_proto_grpc_toolchains", "rules_proto_grpc_repos")
 rules_proto_grpc_toolchains()
 rules_proto_grpc_repos()
+
+load("@build_bazel_rules_nodejs//:repositories.bzl", "build_bazel_rules_nodejs_dependencies")
+
+build_bazel_rules_nodejs_dependencies()

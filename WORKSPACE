@@ -109,25 +109,12 @@ new_local_repository(
     path = "external/bigint",
 )
 
-load("@rules_cc//cc:repositories.bzl", "rules_cc_dependencies")
-
-rules_cc_dependencies()
-
-load("@rules_java//java:repositories.bzl", "rules_java_dependencies", "rules_java_toolchains")
-
-rules_java_dependencies()
-
-rules_java_toolchains()
-
 load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
 
 rules_proto_dependencies()
 
 rules_proto_toolchains()
 
-load("@rules_python//python:repositories.bzl", "py_repositories")
-
-py_repositories()
 
 load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
 
